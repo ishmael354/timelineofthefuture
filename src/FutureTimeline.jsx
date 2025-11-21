@@ -321,19 +321,31 @@ const FutureTimeline = () => {
       const needsSwitch = currentMusicTrackRef.current !== musicTrack;
 
       if (!backgroundMusicRef.current || needsSwitch) {
-        // Fade out old music if it exists
-        if (backgroundMusicRef.current) {
+        // Stop and clean up old music if it exists
+        if (backgroundMusicRef.current && needsSwitch) {
           const oldMusic = backgroundMusicRef.current;
+          console.log(`Stopping old music track: ${currentMusicTrackRef.current}`);
+
+          // Fade out quickly
           musicFadeOutInterval = setInterval(() => {
-            if (oldMusic.volume > 0.05) {
+            if (oldMusic.volume > 0.02) {
               oldMusic.volume = Math.max(0, oldMusic.volume - 0.05);
             } else {
               clearInterval(musicFadeOutInterval);
               oldMusic.pause();
               oldMusic.currentTime = 0;
+              // Completely remove the old audio element
+              oldMusic.src = '';
+              oldMusic.load();
             }
-          }, 100);
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          }, 50);
+
+          // Wait for fade out to complete
+          await new Promise(resolve => setTimeout(resolve, 500));
+
+          // Clear the reference
+          backgroundMusicRef.current = null;
+          currentMusicTrackRef.current = null;
         }
 
         // Start new music
@@ -343,6 +355,7 @@ const FutureTimeline = () => {
         music.volume = 0; // Start at 0 for fade-in
         backgroundMusicRef.current = music;
         currentMusicTrackRef.current = musicTrack;
+        console.log(`Starting new music track: ${musicTrack}`);
 
         music.play().then(() => {
           console.log(`Background music (${musicTrack}.mp3) started successfully`);
