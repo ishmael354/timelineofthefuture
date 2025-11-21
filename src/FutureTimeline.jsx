@@ -298,22 +298,26 @@ const FutureTimeline = () => {
     };
   }, [activeEra, isMuted, audioEnabled]);
 
-  // Background music effect - starts when audio is enabled, only switches at era 10
+  // Background music effect - starts when audio is enabled, switches at eras 7, 10, and 14
   useEffect(() => {
     if (!audioEnabled) return;
 
     let musicFadeOutInterval = null;
     let musicFadeInInterval = null;
+    let isCancelled = false;
 
     const startOrSwitchBackgroundMusic = async () => {
       // Determine which music track to use based on era
-      // background: eras 0-9
-      // background-1: eras 10-13 (Risk Engine through Synchronization Engine)
-      // background-2: eras 14-16 (Strategic Engine/Game Theory through end)
+      // background: eras 0-6 (start through Agrarian)
+      // background-1: eras 7-9 (Writing through Mythic)
+      // background-2: eras 10-13 (Risk through Synchronization)
+      // background-3: eras 14-16 (Strategic/Game Theory through end)
       let musicTrack = 'background';
       if (activeEra >= 14) {
-        musicTrack = 'background-2';
+        musicTrack = 'background-3';
       } else if (activeEra >= 10) {
+        musicTrack = 'background-2';
+      } else if (activeEra >= 7) {
         musicTrack = 'background-1';
       }
 
@@ -342,6 +346,7 @@ const FutureTimeline = () => {
 
           // Wait for fade out to complete
           await new Promise(resolve => setTimeout(resolve, 500));
+          if (isCancelled) return;
 
           // Clear the reference
           backgroundMusicRef.current = null;
@@ -357,18 +362,21 @@ const FutureTimeline = () => {
         currentMusicTrackRef.current = musicTrack;
         console.log(`Starting new music track: ${musicTrack}`);
 
-        music.play().then(() => {
+        await music.play().then(() => {
+          if (isCancelled) return;
           console.log(`Background music (${musicTrack}.mp3) started successfully`);
           // Fade in
           musicFadeInInterval = setInterval(() => {
-            if (backgroundMusicRef.current && backgroundMusicRef.current.volume < (isMuted ? 0 : 0.1)) {
-              backgroundMusicRef.current.volume = Math.min(isMuted ? 0 : 0.1, backgroundMusicRef.current.volume + 0.01);
+            if (backgroundMusicRef.current && backgroundMusicRef.current.volume < (isMuted ? 0 : 0.05)) {
+              backgroundMusicRef.current.volume = Math.min(isMuted ? 0 : 0.05, backgroundMusicRef.current.volume + 0.005);
             } else {
               clearInterval(musicFadeInInterval);
             }
           }, 100);
         }).catch((error) => {
-          console.warn('Background music error:', error.message);
+          if (!isCancelled) {
+            console.warn('Background music error:', error.message);
+          }
         });
       } else if (backgroundMusicRef.current.paused) {
         // Resume if paused
@@ -382,6 +390,7 @@ const FutureTimeline = () => {
 
     // Cleanup function
     return () => {
+      isCancelled = true;
       if (musicFadeOutInterval) clearInterval(musicFadeOutInterval);
       if (musicFadeInInterval) clearInterval(musicFadeInInterval);
     };
@@ -390,7 +399,7 @@ const FutureTimeline = () => {
   // Mute/unmute effect
   useEffect(() => {
     if (backgroundMusicRef.current) {
-      backgroundMusicRef.current.volume = isMuted ? 0 : 0.1;
+      backgroundMusicRef.current.volume = isMuted ? 0 : 0.05;
     }
     if (voiceoverRef.current) {
       voiceoverRef.current.volume = isMuted ? 0 : 0.8;
