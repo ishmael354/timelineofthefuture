@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RotateCcw, Share2, ArrowRight } from 'lucide-react';
 
 const EndPage = ({ onRestart }) => {
   const videoRef = useRef(null);
+  const [videoEnded, setVideoEnded] = useState(false);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -12,6 +13,10 @@ const EndPage = ({ onRestart }) => {
       });
     }
   }, []);
+
+  const handleVideoEnded = () => {
+    setVideoEnded(true);
+  };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -42,15 +47,17 @@ const EndPage = ({ onRestart }) => {
         <video
           ref={videoRef}
           src="/timelineofthefuture/video/logo.mp4"
-          loop
           muted={false}
           playsInline
+          onEnded={handleVideoEnded}
           className="max-w-md w-full"
         />
       </div>
 
       {/* Content */}
-      <div className="relative z-20 max-w-3xl px-6 text-center space-y-12">
+      <div className={`relative z-20 max-w-3xl px-6 text-center space-y-12 transition-all duration-1000 ${
+        videoEnded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}>
 
         {/* Logo/Title */}
         <div className="space-y-6">

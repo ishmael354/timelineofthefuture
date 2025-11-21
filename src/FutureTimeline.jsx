@@ -258,8 +258,8 @@ const FutureTimeline = () => {
 
         // Fade in ambient
         fadeInInterval = setInterval(() => {
-          if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : 0.3)) {
-            ambientRef.current.volume = Math.min(isMuted ? 0 : 0.3, ambientRef.current.volume + 0.05);
+          if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : 0.15)) {
+            ambientRef.current.volume = Math.min(isMuted ? 0 : 0.15, ambientRef.current.volume + 0.03);
           } else {
             clearInterval(fadeInInterval);
           }
@@ -307,8 +307,15 @@ const FutureTimeline = () => {
 
     const startOrSwitchBackgroundMusic = async () => {
       // Determine which music track to use based on era
-      // Change music at era 10 (midpoint) for a shift in tone
-      const musicTrack = activeEra >= 10 ? 'background-1' : 'background';
+      // background: eras 0-9
+      // background-1: eras 10-13 (Risk Engine through Synchronization Engine)
+      // background-2: eras 14-16 (Strategic Engine/Game Theory through end)
+      let musicTrack = 'background';
+      if (activeEra >= 14) {
+        musicTrack = 'background-2';
+      } else if (activeEra >= 10) {
+        musicTrack = 'background-1';
+      }
 
       // Only start or switch if we don't have music playing OR we need to switch tracks
       const needsSwitch = currentMusicTrackRef.current !== musicTrack;
@@ -341,8 +348,8 @@ const FutureTimeline = () => {
           console.log(`Background music (${musicTrack}.mp3) started successfully`);
           // Fade in
           musicFadeInInterval = setInterval(() => {
-            if (backgroundMusicRef.current && backgroundMusicRef.current.volume < (isMuted ? 0 : 0.2)) {
-              backgroundMusicRef.current.volume = Math.min(isMuted ? 0 : 0.2, backgroundMusicRef.current.volume + 0.02);
+            if (backgroundMusicRef.current && backgroundMusicRef.current.volume < (isMuted ? 0 : 0.1)) {
+              backgroundMusicRef.current.volume = Math.min(isMuted ? 0 : 0.1, backgroundMusicRef.current.volume + 0.01);
             } else {
               clearInterval(musicFadeInInterval);
             }
@@ -370,13 +377,13 @@ const FutureTimeline = () => {
   // Mute/unmute effect
   useEffect(() => {
     if (backgroundMusicRef.current) {
-      backgroundMusicRef.current.volume = isMuted ? 0 : 0.2;
+      backgroundMusicRef.current.volume = isMuted ? 0 : 0.1;
     }
     if (voiceoverRef.current) {
       voiceoverRef.current.volume = isMuted ? 0 : 0.8;
     }
     if (ambientRef.current) {
-      ambientRef.current.volume = isMuted ? 0 : 0.3;
+      ambientRef.current.volume = isMuted ? 0 : 0.15;
     }
   }, [isMuted]);
 
