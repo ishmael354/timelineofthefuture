@@ -216,6 +216,10 @@ const FutureTimeline = () => {
   useEffect(() => {
     if (!audioEnabled) return; // Don't play audio until user enables it
 
+    let fadeOutInterval = null;
+    let fadeInInterval = null;
+    let isCancelled = false;
+
     const playAudioSequence = async () => {
       // Stop current voiceover
       if (voiceoverRef.current) {
@@ -226,11 +230,11 @@ const FutureTimeline = () => {
       // Fade out and stop current ambient
       if (ambientRef.current) {
         const currentAmbient = ambientRef.current;
-        const fadeOut = setInterval(() => {
+        fadeOutInterval = setInterval(() => {
           if (currentAmbient && currentAmbient.volume > 0.05) {
             currentAmbient.volume = Math.max(0, currentAmbient.volume - 0.1);
           } else {
-            clearInterval(fadeOut);
+            clearInterval(fadeOutInterval);
             currentAmbient.pause();
             currentAmbient.currentTime = 0;
           }
@@ -239,6 +243,7 @@ const FutureTimeline = () => {
 
       // Wait a moment for fade out
       await new Promise(resolve => setTimeout(resolve, 500));
+      if (isCancelled) return;
 
       try {
         // Step 1: Start ambient sound first
@@ -248,25 +253,28 @@ const FutureTimeline = () => {
         ambientRef.current = ambient;
 
         await ambient.play();
+        if (isCancelled) return;
         console.log(`Playing ambient sound for era ${activeEra}`);
 
         // Fade in ambient
-        const fadeIn = setInterval(() => {
+        fadeInInterval = setInterval(() => {
           if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : 0.3)) {
             ambientRef.current.volume = Math.min(isMuted ? 0 : 0.3, ambientRef.current.volume + 0.05);
           } else {
-            clearInterval(fadeIn);
+            clearInterval(fadeInInterval);
           }
         }, 50);
 
         // Step 2: Wait 2 seconds, then play voiceover
         await new Promise(resolve => setTimeout(resolve, 2000));
+        if (isCancelled) return;
 
         const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${activeEra}.mp3`);
         voiceover.volume = isMuted ? 0 : 0.8;
         voiceoverRef.current = voiceover;
 
         await voiceover.play();
+        if (isCancelled) return;
         console.log(`Playing voiceover for era ${activeEra}`);
 
       } catch (error) {
@@ -278,6 +286,9 @@ const FutureTimeline = () => {
 
     // Cleanup function
     return () => {
+      isCancelled = true;
+      if (fadeOutInterval) clearInterval(fadeOutInterval);
+      if (fadeInInterval) clearInterval(fadeInInterval);
       if (voiceoverRef.current) {
         voiceoverRef.current.pause();
       }
@@ -285,11 +296,14 @@ const FutureTimeline = () => {
         ambientRef.current.pause();
       }
     };
-  }, [activeEra, isMuted, audioEnabled, eras]);
+  }, [activeEra, isMuted, audioEnabled]);
 
   // Background music effect - starts when audio is enabled, only switches at era 10
   useEffect(() => {
     if (!audioEnabled) return;
+
+    let musicFadeOutInterval = null;
+    let musicFadeInInterval = null;
 
     const startOrSwitchBackgroundMusic = async () => {
       // Determine which music track to use based on era
@@ -303,11 +317,11 @@ const FutureTimeline = () => {
         // Fade out old music if it exists
         if (backgroundMusicRef.current) {
           const oldMusic = backgroundMusicRef.current;
-          const fadeOut = setInterval(() => {
+          musicFadeOutInterval = setInterval(() => {
             if (oldMusic.volume > 0.05) {
               oldMusic.volume = Math.max(0, oldMusic.volume - 0.05);
             } else {
-              clearInterval(fadeOut);
+              clearInterval(musicFadeOutInterval);
               oldMusic.pause();
               oldMusic.currentTime = 0;
             }
@@ -326,11 +340,11 @@ const FutureTimeline = () => {
         music.play().then(() => {
           console.log(`Background music (${musicTrack}.mp3) started successfully`);
           // Fade in
-          const fadeIn = setInterval(() => {
+          musicFadeInInterval = setInterval(() => {
             if (backgroundMusicRef.current && backgroundMusicRef.current.volume < (isMuted ? 0 : 0.2)) {
               backgroundMusicRef.current.volume = Math.min(isMuted ? 0 : 0.2, backgroundMusicRef.current.volume + 0.02);
             } else {
-              clearInterval(fadeIn);
+              clearInterval(musicFadeInInterval);
             }
           }, 100);
         }).catch((error) => {
@@ -345,6 +359,12 @@ const FutureTimeline = () => {
     };
 
     startOrSwitchBackgroundMusic();
+
+    // Cleanup function
+    return () => {
+      if (musicFadeOutInterval) clearInterval(musicFadeOutInterval);
+      if (musicFadeInInterval) clearInterval(musicFadeInInterval);
+    };
   }, [audioEnabled, activeEra, isMuted]);
 
   // Mute/unmute effect
@@ -438,7 +458,7 @@ const FutureTimeline = () => {
 
             {eras.map((era, idx) => (
               <button
-                key={era.id}
+                key={idx}
                 onClick={() => setActiveEra(idx)}
                 className={`z-10 flex items-center gap-4 text-left group transition-all duration-300 py-2 ${idx === activeEra ? 'opacity-100 translate-x-2' : 'opacity-40 hover:opacity-70'}`}
               >
