@@ -8,6 +8,8 @@ An interactive timeline exploring how the concept of "future" evolved from the f
 - Smooth animations and transitions
 - Custom visualizations for each era
 - Auto-play functionality
+- **Immersive audio system**: Voice-over narration, background music, and ambient sounds
+- Mute/unmute toggle for audio control
 - Fully responsive design
 - Optimized for iframe embedding
 
@@ -45,6 +47,55 @@ This creates an optimized production build in the `dist` folder.
 ```bash
 npm run preview
 ```
+
+## Audio System
+
+The timeline includes an immersive 3-layer audio system:
+
+### Audio Layers
+
+1. **Background Music** (`public/audio/music/background.mp3`)
+   - Continuous atmospheric music that loops throughout
+   - Volume: 20% (subtle, non-intrusive)
+   - Should be ~2-5 minutes long, seamlessly loopable
+
+2. **Voice-Over Narration** (`public/audio/voiceovers/era-0.mp3` through `era-16.mp3`)
+   - Narrates the story/insight for each era
+   - Plays once when entering each era
+   - Volume: 80% (primary audio)
+   - Recommended: 30-60 seconds per era
+
+3. **Ambient Soundscapes** (`public/audio/ambient/era-0.mp3` through `era-16.mp3`)
+   - Era-specific atmospheric sounds (e.g., waves for tidal era, machinery for industrial era)
+   - Loops while viewing each era
+   - Fades in/out smoothly on era transitions
+   - Volume: 30% (background atmosphere)
+   - Recommended: 20-40 seconds, seamlessly loopable
+
+### Adding Your Audio Files
+
+1. Create your audio files (MP3 format recommended)
+2. Place them in the appropriate folders:
+   ```
+   public/audio/
+   ├── music/background.mp3
+   ├── voiceovers/
+   │   ├── era-0.mp3
+   │   ├── era-1.mp3
+   │   └── ... (through era-16.mp3)
+   └── ambient/
+       ├── era-0.mp3
+       ├── era-1.mp3
+       └── ... (through era-16.mp3)
+   ```
+3. See `public/audio/README.md` for detailed specifications
+4. Deploy: `npm run deploy`
+
+### Audio Controls
+
+- **Mute Button**: Red speaker icon in the control bar toggles all audio on/off
+- **Missing Files**: The app gracefully handles missing audio files - if a file doesn't exist, it simply won't play
+- **Browser Autoplay**: Some browsers block autoplay until user interaction. Background music will start after the first click.
 
 ## Deployment to GitHub Pages
 

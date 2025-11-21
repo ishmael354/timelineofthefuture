@@ -1,13 +1,20 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   ArrowRight, ArrowLeft, Play, Pause, Anchor, Sun, Moon,
   Activity, Map, MessageSquare, Sprout, BookOpen, Scale,
-  Flame, Coins, Orbit, Factory, Globe, Radar, Cpu, ScanFace
+  Flame, Coins, Orbit, Factory, Globe, Radar, Cpu, ScanFace,
+  Volume2, VolumeX
 } from 'lucide-react';
 
 const FutureTimeline = () => {
   const [activeEra, setActiveEra] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+
+  // Audio refs
+  const backgroundMusicRef = useRef(null);
+  const voiceoverRef = useRef(null);
+  const ambientRef = useRef(null);
 
   const eras = useMemo(() => [
     {
@@ -209,6 +216,107 @@ const FutureTimeline = () => {
     return () => clearInterval(interval);
   }, [isAutoPlaying, eras.length]);
 
+  // Audio playback effect
+  useEffect(() => {
+    const playAudio = async () => {
+      // Stop current voiceover and ambient
+      if (voiceoverRef.current) {
+        voiceoverRef.current.pause();
+        voiceoverRef.current.currentTime = 0;
+      }
+
+      if (ambientRef.current) {
+        // Fade out current ambient
+        const fadeOut = setInterval(() => {
+          if (ambientRef.current && ambientRef.current.volume > 0.1) {
+            ambientRef.current.volume = Math.max(0, ambientRef.current.volume - 0.1);
+          } else {
+            clearInterval(fadeOut);
+            if (ambientRef.current) {
+              ambientRef.current.pause();
+              ambientRef.current.currentTime = 0;
+            }
+          }
+        }, 50);
+      }
+
+      // Load and play new audio (if files exist)
+      try {
+        // Voiceover
+        const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${activeEra}.mp3`);
+        voiceover.volume = isMuted ? 0 : 0.8;
+        voiceoverRef.current = voiceover;
+
+        voiceover.play().catch(() => {
+          // File doesn't exist or can't play, that's okay
+          console.log(`No voiceover for era ${activeEra}`);
+        });
+
+        // Ambient sound (looping)
+        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3`);
+        ambient.loop = true;
+        ambient.volume = 0; // Start at 0 for fade-in
+        ambientRef.current = ambient;
+
+        ambient.play().then(() => {
+          // Fade in
+          const fadeIn = setInterval(() => {
+            if (ambientRef.current && ambientRef.current.volume < 0.3) {
+              ambientRef.current.volume = Math.min(0.3, ambientRef.current.volume + 0.05);
+            } else {
+              clearInterval(fadeIn);
+            }
+          }, 50);
+        }).catch(() => {
+          console.log(`No ambient sound for era ${activeEra}`);
+        });
+
+      } catch (error) {
+        console.log('Audio playback error:', error);
+      }
+    };
+
+    playAudio();
+
+    // Cleanup function
+    return () => {
+      if (voiceoverRef.current) {
+        voiceoverRef.current.pause();
+      }
+      if (ambientRef.current) {
+        ambientRef.current.pause();
+      }
+    };
+  }, [activeEra, isMuted]);
+
+  // Background music effect (starts on first interaction)
+  useEffect(() => {
+    if (!backgroundMusicRef.current) {
+      const music = new Audio('/timelineofthefuture/audio/music/background.mp3');
+      music.loop = true;
+      music.volume = isMuted ? 0 : 0.2;
+      backgroundMusicRef.current = music;
+
+      // Try to play (may be blocked by browser until user interaction)
+      music.play().catch(() => {
+        console.log('Background music will start on user interaction');
+      });
+    }
+  }, []);
+
+  // Mute/unmute effect
+  useEffect(() => {
+    if (backgroundMusicRef.current) {
+      backgroundMusicRef.current.volume = isMuted ? 0 : 0.2;
+    }
+    if (voiceoverRef.current) {
+      voiceoverRef.current.volume = isMuted ? 0 : 0.8;
+    }
+    if (ambientRef.current) {
+      ambientRef.current.volume = isMuted ? 0 : 0.3;
+    }
+  }, [isMuted]);
+
   // Memoized particle positions to prevent flickering on re-renders
   const particleMap = useMemo(() => {
     const generate = (count) => [...Array(count)].map((_, i) => ({
@@ -270,6 +378,13 @@ const FutureTimeline = () => {
               {isAutoPlaying ? 'PAUSE' : 'PLAY'}
             </button>
             <button onClick={handleNext} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
+            <button
+              onClick={() => setIsMuted(!isMuted)}
+              className={`p-3 rounded-full transition-colors ${isMuted ? 'bg-red-500/20 hover:bg-red-500/30' : 'hover:bg-white/10'}`}
+              aria-label={isMuted ? 'Unmute' : 'Mute'}
+            >
+              {isMuted ? <VolumeX size={20}/> : <Volume2 size={20}/>}
+            </button>
           </div>
         </div>
       </div>
