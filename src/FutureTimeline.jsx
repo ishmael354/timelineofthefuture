@@ -5,8 +5,10 @@ import {
   Flame, Coins, Orbit, Factory, Globe, Radar, Cpu, ScanFace,
   Volume2, VolumeX
 } from 'lucide-react';
+import IntroPage from './IntroPage';
 
 const FutureTimeline = () => {
+  const [showIntro, setShowIntro] = useState(true);
   const [activeEra, setActiveEra] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -397,6 +399,18 @@ const FutureTimeline = () => {
 
   const handleNext = () => setActiveEra((prev) => (prev + 1) % eras.length);
   const handlePrev = () => setActiveEra((prev) => (prev - 1 + eras.length) % eras.length);
+
+  const handleStartExperience = () => {
+    setShowIntro(false);
+    setActiveEra(1); // Start at first content era (skip old intro at position 0)
+    setAudioEnabled(true);
+    setIsAutoPlaying(true);
+  };
+
+  // Show intro page first
+  if (showIntro) {
+    return <IntroPage onStart={handleStartExperience} />;
+  }
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-white/20 flex flex-col md:flex-row overflow-hidden relative">
