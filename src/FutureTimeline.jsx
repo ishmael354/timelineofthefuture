@@ -6,9 +6,11 @@ import {
   Volume2, VolumeX
 } from 'lucide-react';
 import IntroPage from './IntroPage';
+import EndPage from './EndPage';
 
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
+  const [showEnd, setShowEnd] = useState(false);
   const [activeEra, setActiveEra] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -23,18 +25,6 @@ const FutureTimeline = () => {
   const eras = useMemo(() => [
     {
       id: 0,
-      engine: "Introduction",
-      engineIcon: <Activity size={16} />,
-      title: "The Architecture of Time",
-      epoch: "How Humans Invented \"The Future\"",
-      color: "text-green-400",
-      bg: "bg-gray-900",
-      narrative: "We talk about the future like it's a single thing. It isn't. Over billions of years, life has slowly hacked its way from chemical clocks in bacteria to algorithmic feeds on our phones—each era building a new \"engine\" for predicting, controlling, or selling tomorrow. This timeline is a guided tour through those engines: from circadian rhythms and migration routes to contracts, corporations, simulations, and curated feeds.",
-      insight: "When we say \"the future,\" what are we actually talking about—a rhythm, a contract, an obligation, an asset, a simulation, or a script someone else is writing for us?",
-      isIntro: true
-    },
-    {
-      id: 1,
       engine: "The Null State",
       engineIcon: <Anchor size={16} />,
       title: "The Eternal Now",
@@ -226,7 +216,15 @@ const FutureTimeline = () => {
     let interval;
     if (isAutoPlaying) {
       interval = setInterval(() => {
-        setActiveEra((prev) => (prev + 1) % eras.length);
+        setActiveEra((prev) => {
+          if (prev === eras.length - 1) {
+            // We're at the last era, show end page
+            setShowEnd(true);
+            setIsAutoPlaying(false);
+            return prev;
+          }
+          return prev + 1;
+        });
       }, 90000); // 90 seconds - enough time for voice-overs to complete
     }
     return () => clearInterval(interval);
@@ -235,7 +233,6 @@ const FutureTimeline = () => {
   // Audio playback effect with proper sequencing
   useEffect(() => {
     if (!audioEnabled) return; // Don't play audio until user enables it
-    if (eras[activeEra]?.isIntro) return; // Skip audio on intro slide
 
     const playAudioSequence = async () => {
       // Stop current voiceover
@@ -262,17 +259,14 @@ const FutureTimeline = () => {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       try {
-        // Calculate audio index (intro is at position 0, so subtract 1 for actual era audio)
-        const audioIndex = activeEra - 1;
-
         // Step 1: Start ambient sound first
-        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${audioIndex}.mp3`);
+        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3`);
         ambient.loop = true;
         ambient.volume = 0; // Start at 0 for fade-in
         ambientRef.current = ambient;
 
         await ambient.play();
-        console.log(`Playing ambient sound for era ${audioIndex} (slide ${activeEra})`);
+        console.log(`Playing ambient sound for era ${activeEra}`);
 
         // Fade in ambient
         const fadeIn = setInterval(() => {
@@ -286,12 +280,12 @@ const FutureTimeline = () => {
         // Step 2: Wait 2 seconds, then play voiceover
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${audioIndex}.mp3`);
+        const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${activeEra}.mp3`);
         voiceover.volume = isMuted ? 0 : 0.8;
         voiceoverRef.current = voiceover;
 
         await voiceover.play();
-        console.log(`Playing voiceover for era ${audioIndex} (slide ${activeEra})`);
+        console.log(`Playing voiceover for era ${activeEra}`);
 
       } catch (error) {
         console.warn(`Audio playback error for era ${activeEra}:`, error.message);
@@ -401,19 +395,52 @@ const FutureTimeline = () => {
     };
   }, []);
 
-  const handleNext = () => setActiveEra((prev) => (prev + 1) % eras.length);
+  const handleNext = () => {
+    if (activeEra === eras.length - 1) {
+      // We're at the last era, show end page
+      setShowEnd(true);
+      setIsAutoPlaying(false);
+    } else {
+      setActiveEra((prev) => prev + 1);
+    }
+  };
+
   const handlePrev = () => setActiveEra((prev) => (prev - 1 + eras.length) % eras.length);
 
   const handleStartExperience = () => {
     setShowIntro(false);
-    setActiveEra(1); // Start at first content era (skip old intro at position 0)
+    setActiveEra(0); // Start at first era (The Eternal Now)
     setAudioEnabled(true);
     setIsAutoPlaying(true);
+  };
+
+  const handleRestart = () => {
+    setShowEnd(false);
+    setShowIntro(true);
+    setActiveEra(0);
+    setIsAutoPlaying(false);
+    setAudioEnabled(false);
+    // Stop all audio
+    if (backgroundMusicRef.current) {
+      backgroundMusicRef.current.pause();
+      backgroundMusicRef.current.currentTime = 0;
+    }
+    if (voiceoverRef.current) {
+      voiceoverRef.current.pause();
+    }
+    if (ambientRef.current) {
+      ambientRef.current.pause();
+    }
   };
 
   // Show intro page first
   if (showIntro) {
     return <IntroPage onStart={handleStartExperience} />;
+  }
+
+  // Show end page after last era
+  if (showEnd) {
+    return <EndPage onRestart={handleRestart} />;
   }
 
   return (
@@ -501,59 +528,35 @@ const FutureTimeline = () => {
            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent md:bg-gradient-to-r md:from-black md:via-black/50 md:to-transparent"></div>
         </div>
 
-        <div className={`relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 ${eras[activeEra].isIntro ? 'items-center text-center' : 'max-w-4xl'}`}>
+        <div className="relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 max-w-4xl">
           <div className="transition-all duration-700 ease-out">
-            {/* Engine Tag - Hidden on intro */}
-            {!eras[activeEra].isIntro && (
-              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-6 transition-all duration-500`}>
-                <span className={`${eras[activeEra].color} transition-colors duration-500`}>{eras[activeEra].engineIcon}</span>
-                <span className={`text-xs font-mono uppercase tracking-wider ${eras[activeEra].color} transition-colors duration-500`}>
-                  {eras[activeEra].engine}
-                </span>
-              </div>
-            )}
+            {/* Engine Tag */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-6 transition-all duration-500">
+              <span className={`${eras[activeEra].color} transition-colors duration-500`}>{eras[activeEra].engineIcon}</span>
+              <span className={`text-xs font-mono uppercase tracking-wider ${eras[activeEra].color} transition-colors duration-500`}>
+                {eras[activeEra].engine}
+              </span>
+            </div>
 
             {/* Title */}
-            <h2 className={`font-bold mb-6 leading-tight tracking-tight transition-all duration-500 ${
-              eras[activeEra].isIntro
-                ? 'text-5xl md:text-7xl lg:text-8xl mb-8'
-                : 'text-4xl md:text-6xl lg:text-7xl min-h-[120px] md:min-h-[180px] flex items-center'
-            }`}>
+            <h2 className="font-bold mb-6 leading-tight tracking-tight transition-all duration-500 text-4xl md:text-6xl lg:text-7xl min-h-[120px] md:min-h-[180px] flex items-center">
               {eras[activeEra].title}
             </h2>
 
             {/* Epoch Badge */}
-            <div className={`mb-8 opacity-50 font-mono transition-all duration-500 ${
-              eras[activeEra].isIntro
-                ? 'text-xl md:text-2xl mb-12'
-                : 'text-sm border-l border-white/30 pl-3'
-            }`}>
+            <div className="mb-8 opacity-50 font-mono transition-all duration-500 text-sm border-l border-white/30 pl-3">
               {eras[activeEra].epoch}
             </div>
 
             {/* Narrative */}
-            <p className={`font-light leading-relaxed mb-12 transition-all duration-500 ${
-              eras[activeEra].isIntro
-                ? 'text-xl md:text-2xl text-gray-200 max-w-4xl'
-                : 'text-lg md:text-xl text-gray-300 max-w-2xl min-h-[160px]'
-            }`}>
+            <p className="font-light leading-relaxed mb-12 transition-all duration-500 text-lg md:text-xl text-gray-300 max-w-2xl min-h-[160px]">
               {eras[activeEra].narrative}
             </p>
 
             {/* The "Insight" Box */}
-            <div className={`${eras[activeEra].color.replace('text', 'border')} transition-all duration-500 ${
-              eras[activeEra].isIntro
-                ? 'border-t-2 pt-8 mt-8 max-w-4xl'
-                : 'border-l-4 pl-6 py-2'
-            }`}>
-              {!eras[activeEra].isIntro && (
-                <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">The Paradigm Shift</p>
-              )}
-              <p className={`text-white font-medium transition-all duration-500 ${
-                eras[activeEra].isIntro
-                  ? 'text-2xl md:text-3xl italic'
-                  : 'text-xl md:text-2xl'
-              }`}>{eras[activeEra].insight}</p>
+            <div className={`${eras[activeEra].color.replace('text', 'border')} transition-all duration-500 border-l-4 pl-6 py-2`}>
+              <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">The Paradigm Shift</p>
+              <p className="text-white font-medium transition-all duration-500 text-xl md:text-2xl">{eras[activeEra].insight}</p>
             </div>
           </div>
         </div>
