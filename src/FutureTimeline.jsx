@@ -20,6 +20,18 @@ const FutureTimeline = () => {
   const eras = useMemo(() => [
     {
       id: 0,
+      engine: "Introduction",
+      engineIcon: <Activity size={16} />,
+      title: "The Architecture of Time",
+      epoch: "How Humans Invented \"The Future\"",
+      color: "text-white",
+      bg: "bg-black",
+      narrative: "We talk about the future like it's a single thing. It isn't. Over billions of years, life has slowly hacked its way from chemical clocks in bacteria to algorithmic feeds on our phones—each era building a new \"engine\" for predicting, controlling, or selling tomorrow. This timeline is a guided tour through those engines: from circadian rhythms and migration routes to contracts, corporations, simulations, and curated feeds.",
+      insight: "When we say \"the future,\" what are we actually talking about—a rhythm, a contract, an obligation, an asset, a simulation, or a script someone else is writing for us?",
+      isIntro: true
+    },
+    {
+      id: 1,
       engine: "The Null State",
       engineIcon: <Anchor size={16} />,
       title: "The Eternal Now",
@@ -217,69 +229,70 @@ const FutureTimeline = () => {
     return () => clearInterval(interval);
   }, [isAutoPlaying, eras.length]);
 
-  // Audio playback effect
+  // Audio playback effect with proper sequencing
   useEffect(() => {
     if (!audioEnabled) return; // Don't play audio until user enables it
+    if (eras[activeEra]?.isIntro) return; // Skip audio on intro slide
 
-    const playAudio = async () => {
-      // Stop current voiceover and ambient
+    const playAudioSequence = async () => {
+      // Stop current voiceover
       if (voiceoverRef.current) {
         voiceoverRef.current.pause();
         voiceoverRef.current.currentTime = 0;
       }
 
+      // Fade out and stop current ambient
       if (ambientRef.current) {
-        // Fade out current ambient
+        const currentAmbient = ambientRef.current;
         const fadeOut = setInterval(() => {
-          if (ambientRef.current && ambientRef.current.volume > 0.1) {
-            ambientRef.current.volume = Math.max(0, ambientRef.current.volume - 0.1);
+          if (currentAmbient && currentAmbient.volume > 0.05) {
+            currentAmbient.volume = Math.max(0, currentAmbient.volume - 0.1);
           } else {
             clearInterval(fadeOut);
-            if (ambientRef.current) {
-              ambientRef.current.pause();
-              ambientRef.current.currentTime = 0;
-            }
+            currentAmbient.pause();
+            currentAmbient.currentTime = 0;
           }
         }, 50);
       }
 
-      // Load and play new audio (if files exist)
+      // Wait a moment for fade out
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       try {
-        // Voiceover
+        // Step 1: Start ambient sound first
+        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3`);
+        ambient.loop = true;
+        ambient.volume = 0; // Start at 0 for fade-in
+        ambientRef.current = ambient;
+
+        await ambient.play();
+        console.log(`Playing ambient sound for era ${activeEra}`);
+
+        // Fade in ambient
+        const fadeIn = setInterval(() => {
+          if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : 0.3)) {
+            ambientRef.current.volume = Math.min(isMuted ? 0 : 0.3, ambientRef.current.volume + 0.05);
+          } else {
+            clearInterval(fadeIn);
+          }
+        }, 50);
+
+        // Step 2: Wait 2 seconds, then play voiceover
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
         const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${activeEra}.mp3`);
         voiceover.volume = isMuted ? 0 : 0.8;
         voiceoverRef.current = voiceover;
 
-        voiceover.play().catch((error) => {
-          console.log(`No voiceover for era ${activeEra}:`, error.message);
-        });
-
-        // Ambient sound (looping)
-        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3`);
-        ambient.loop = true;
-        ambient.volume = isMuted ? 0 : 0; // Start at 0 for fade-in
-        ambientRef.current = ambient;
-
-        ambient.play().then(() => {
-          console.log(`Playing ambient sound for era ${activeEra}`);
-          // Fade in
-          const fadeIn = setInterval(() => {
-            if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : 0.3)) {
-              ambientRef.current.volume = Math.min(isMuted ? 0 : 0.3, ambientRef.current.volume + 0.05);
-            } else {
-              clearInterval(fadeIn);
-            }
-          }, 50);
-        }).catch((error) => {
-          console.warn(`Could not play ambient sound for era ${activeEra}:`, error.message);
-        });
+        await voiceover.play();
+        console.log(`Playing voiceover for era ${activeEra}`);
 
       } catch (error) {
-        console.log('Audio playback error:', error);
+        console.warn(`Audio playback error for era ${activeEra}:`, error.message);
       }
     };
 
-    playAudio();
+    playAudioSequence();
 
     // Cleanup function
     return () => {
@@ -290,33 +303,64 @@ const FutureTimeline = () => {
         ambientRef.current.pause();
       }
     };
-  }, [activeEra, isMuted, audioEnabled]);
+  }, [activeEra, isMuted, audioEnabled, eras]);
 
-  // Background music effect - starts when audio is enabled
+  // Background music effect - starts when audio is enabled and changes with era
   useEffect(() => {
     if (!audioEnabled) return;
 
-    const startBackgroundMusic = () => {
-      if (!backgroundMusicRef.current) {
-        const music = new Audio('/timelineofthefuture/audio/music/background.mp3');
+    const startOrSwitchBackgroundMusic = async () => {
+      // Determine which music track to use based on era
+      // Change music at era 10 (midpoint) for a shift in tone
+      const musicTrack = activeEra >= 10 ? 'background-2.mp3' : 'background.mp3';
+      const musicPath = `/timelineofthefuture/audio/music/${musicTrack}`;
+
+      // If music doesn't exist or we need to switch tracks
+      if (!backgroundMusicRef.current || backgroundMusicRef.current.src !== musicPath) {
+        // Fade out old music if it exists
+        if (backgroundMusicRef.current) {
+          const oldMusic = backgroundMusicRef.current;
+          const fadeOut = setInterval(() => {
+            if (oldMusic.volume > 0.05) {
+              oldMusic.volume = Math.max(0, oldMusic.volume - 0.05);
+            } else {
+              clearInterval(fadeOut);
+              oldMusic.pause();
+              oldMusic.currentTime = 0;
+            }
+          }, 100);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        // Start new music
+        const music = new Audio(musicPath);
         music.loop = true;
-        music.volume = isMuted ? 0 : 0.2;
+        music.volume = 0; // Start at 0 for fade-in
         backgroundMusicRef.current = music;
 
         music.play().then(() => {
-          console.log('Background music started successfully');
+          console.log(`Background music (${musicTrack}) started successfully`);
+          // Fade in
+          const fadeIn = setInterval(() => {
+            if (backgroundMusicRef.current && backgroundMusicRef.current.volume < (isMuted ? 0 : 0.2)) {
+              backgroundMusicRef.current.volume = Math.min(isMuted ? 0 : 0.2, backgroundMusicRef.current.volume + 0.02);
+            } else {
+              clearInterval(fadeIn);
+            }
+          }, 100);
         }).catch((error) => {
           console.warn('Background music error:', error.message);
         });
       } else if (backgroundMusicRef.current.paused) {
+        // Resume if paused
         backgroundMusicRef.current.play().catch((error) => {
           console.log('Background music playback error:', error.message);
         });
       }
     };
 
-    startBackgroundMusic();
-  }, [audioEnabled, isMuted]);
+    startOrSwitchBackgroundMusic();
+  }, [audioEnabled, activeEra, isMuted]);
 
   // Mute/unmute effect
   useEffect(() => {
@@ -389,7 +433,7 @@ const FutureTimeline = () => {
             <button onClick={handlePrev} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowLeft size={20}/></button>
             <button onClick={() => setIsAutoPlaying(!isAutoPlaying)} className="flex-grow flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-bold py-3 rounded-full hover:bg-white/10 transition-colors border border-white/10">
               {isAutoPlaying ? <Pause size={14}/> : <Play size={14}/>}
-              {isAutoPlaying ? 'PAUSE AUTO' : 'AUTO PLAY'}
+              {isAutoPlaying ? 'PAUSE' : 'START EXPERIENCE'}
             </button>
             <button onClick={handleNext} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
             <button
@@ -430,35 +474,59 @@ const FutureTimeline = () => {
            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent md:bg-gradient-to-r md:from-black md:via-black/50 md:to-transparent"></div>
         </div>
 
-        <div className="relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 max-w-4xl">
+        <div className={`relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 ${eras[activeEra].isIntro ? 'items-center text-center' : 'max-w-4xl'}`}>
           <div className="transition-all duration-700 ease-out">
-            {/* Engine Tag */}
-            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-6 transition-all duration-500`}>
-              <span className={`${eras[activeEra].color} transition-colors duration-500`}>{eras[activeEra].engineIcon}</span>
-              <span className={`text-xs font-mono uppercase tracking-wider ${eras[activeEra].color} transition-colors duration-500`}>
-                {eras[activeEra].engine}
-              </span>
-            </div>
+            {/* Engine Tag - Hidden on intro */}
+            {!eras[activeEra].isIntro && (
+              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-6 transition-all duration-500`}>
+                <span className={`${eras[activeEra].color} transition-colors duration-500`}>{eras[activeEra].engineIcon}</span>
+                <span className={`text-xs font-mono uppercase tracking-wider ${eras[activeEra].color} transition-colors duration-500`}>
+                  {eras[activeEra].engine}
+                </span>
+              </div>
+            )}
 
             {/* Title */}
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight transition-all duration-500 min-h-[120px] md:min-h-[180px] flex items-center">
+            <h2 className={`font-bold mb-6 leading-tight tracking-tight transition-all duration-500 ${
+              eras[activeEra].isIntro
+                ? 'text-5xl md:text-7xl lg:text-8xl mb-8'
+                : 'text-4xl md:text-6xl lg:text-7xl min-h-[120px] md:min-h-[180px] flex items-center'
+            }`}>
               {eras[activeEra].title}
             </h2>
 
             {/* Epoch Badge */}
-            <div className="mb-8 opacity-50 font-mono text-sm border-l border-white/30 pl-3 transition-all duration-500">
+            <div className={`mb-8 opacity-50 font-mono transition-all duration-500 ${
+              eras[activeEra].isIntro
+                ? 'text-xl md:text-2xl mb-12'
+                : 'text-sm border-l border-white/30 pl-3'
+            }`}>
               {eras[activeEra].epoch}
             </div>
 
             {/* Narrative */}
-            <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed mb-12 max-w-2xl transition-all duration-500 min-h-[160px]">
+            <p className={`font-light leading-relaxed mb-12 transition-all duration-500 ${
+              eras[activeEra].isIntro
+                ? 'text-xl md:text-2xl text-gray-200 max-w-4xl'
+                : 'text-lg md:text-xl text-gray-300 max-w-2xl min-h-[160px]'
+            }`}>
               {eras[activeEra].narrative}
             </p>
 
             {/* The "Insight" Box */}
-            <div className={`border-l-4 ${eras[activeEra].color.replace('text', 'border')} pl-6 py-2 transition-all duration-500`}>
-              <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">The Paradigm Shift</p>
-              <p className="text-xl md:text-2xl text-white font-medium transition-all duration-500">{eras[activeEra].insight}</p>
+            <div className={`${eras[activeEra].color.replace('text', 'border')} transition-all duration-500 ${
+              eras[activeEra].isIntro
+                ? 'border-t-2 pt-8 mt-8 max-w-4xl'
+                : 'border-l-4 pl-6 py-2'
+            }`}>
+              {!eras[activeEra].isIntro && (
+                <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">The Paradigm Shift</p>
+              )}
+              <p className={`text-white font-medium transition-all duration-500 ${
+                eras[activeEra].isIntro
+                  ? 'text-2xl md:text-3xl italic'
+                  : 'text-xl md:text-2xl'
+              }`}>{eras[activeEra].insight}</p>
             </div>
           </div>
         </div>
