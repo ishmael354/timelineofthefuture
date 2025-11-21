@@ -211,7 +211,7 @@ const FutureTimeline = () => {
     if (isAutoPlaying) {
       interval = setInterval(() => {
         setActiveEra((prev) => (prev + 1) % eras.length);
-      }, 8000);
+      }, 90000); // 90 seconds - enough time for voice-overs to complete
     }
     return () => clearInterval(interval);
   }, [isAutoPlaying, eras.length]);
@@ -252,52 +252,25 @@ const FutureTimeline = () => {
           console.log(`No voiceover for era ${activeEra}`);
         });
 
-        // Ambient sound (looping) - try both .mp3 and .wav
-        const tryAmbient = async () => {
-          let ambient;
-          try {
-            // Try MP3 first
-            ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3`);
-          } catch {
-            // Try WAV if MP3 doesn't exist
-            ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.wav`);
-          }
+        // Ambient sound (looping)
+        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3`);
+        ambient.loop = true;
+        ambient.volume = isMuted ? 0 : 0; // Start at 0 for fade-in
+        ambientRef.current = ambient;
 
-          ambient.loop = true;
-          ambient.volume = 0; // Start at 0 for fade-in
-          ambientRef.current = ambient;
-
-          ambient.play().then(() => {
-            // Fade in
-            const fadeIn = setInterval(() => {
-              if (ambientRef.current && ambientRef.current.volume < 0.3) {
-                ambientRef.current.volume = Math.min(0.3, ambientRef.current.volume + 0.05);
-              } else {
-                clearInterval(fadeIn);
-              }
-            }, 50);
-          }).catch((e) => {
-            // Try WAV if MP3 failed
-            const ambientWav = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.wav`);
-            ambientWav.loop = true;
-            ambientWav.volume = 0;
-            ambientRef.current = ambientWav;
-
-            ambientWav.play().then(() => {
-              const fadeIn = setInterval(() => {
-                if (ambientRef.current && ambientRef.current.volume < 0.3) {
-                  ambientRef.current.volume = Math.min(0.3, ambientRef.current.volume + 0.05);
-                } else {
-                  clearInterval(fadeIn);
-                }
-              }, 50);
-            }).catch(() => {
-              console.log(`No ambient sound for era ${activeEra}`);
-            });
-          });
-        };
-
-        tryAmbient();
+        ambient.play().then(() => {
+          console.log(`Playing ambient sound for era ${activeEra}`);
+          // Fade in
+          const fadeIn = setInterval(() => {
+            if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : 0.3)) {
+              ambientRef.current.volume = Math.min(isMuted ? 0 : 0.3, ambientRef.current.volume + 0.05);
+            } else {
+              clearInterval(fadeIn);
+            }
+          }, 50);
+        }).catch((error) => {
+          console.warn(`Could not play ambient sound for era ${activeEra}:`, error.message);
+        });
 
       } catch (error) {
         console.log('Audio playback error:', error);
@@ -317,20 +290,42 @@ const FutureTimeline = () => {
     };
   }, [activeEra, isMuted]);
 
-  // Background music effect (starts on first interaction)
+  // Background music effect - starts on first user interaction
   useEffect(() => {
-    if (!backgroundMusicRef.current) {
-      const music = new Audio('/timelineofthefuture/audio/music/background.mp3');
-      music.loop = true;
-      music.volume = isMuted ? 0 : 0.2;
-      backgroundMusicRef.current = music;
+    const startBackgroundMusic = () => {
+      if (!backgroundMusicRef.current) {
+        const music = new Audio('/timelineofthefuture/audio/music/background.mp3');
+        music.loop = true;
+        music.volume = isMuted ? 0 : 0.2;
+        backgroundMusicRef.current = music;
 
-      // Try to play (may be blocked by browser until user interaction)
-      music.play().catch(() => {
-        console.log('Background music will start on user interaction');
-      });
-    }
-  }, []);
+        music.play().then(() => {
+          console.log('Background music started successfully');
+        }).catch((error) => {
+          console.warn('Background music blocked by browser - will retry on next interaction:', error.message);
+        });
+      } else if (backgroundMusicRef.current.paused) {
+        // If music exists but is paused, try to play it
+        backgroundMusicRef.current.play().catch(() => {
+          console.log('Background music still blocked');
+        });
+      }
+    };
+
+    // Try to start music immediately
+    startBackgroundMusic();
+
+    // Also add click listener to retry if blocked
+    const handleClick = () => {
+      startBackgroundMusic();
+    };
+
+    document.addEventListener('click', handleClick, { once: true });
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, [isMuted]);
 
   // Mute/unmute effect
   useEffect(() => {
@@ -403,7 +398,7 @@ const FutureTimeline = () => {
             <button onClick={handlePrev} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowLeft size={20}/></button>
             <button onClick={() => setIsAutoPlaying(!isAutoPlaying)} className="flex-grow flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-bold py-3 rounded-full hover:bg-white/10 transition-colors border border-white/10">
               {isAutoPlaying ? <Pause size={14}/> : <Play size={14}/>}
-              {isAutoPlaying ? 'PAUSE' : 'PLAY'}
+              {isAutoPlaying ? 'PAUSE AUTO' : 'AUTO PLAY'}
             </button>
             <button onClick={handleNext} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
             <button
