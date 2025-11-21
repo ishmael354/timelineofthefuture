@@ -1,0 +1,606 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  ArrowRight, ArrowLeft, Play, Pause, Anchor, Sun, Moon,
+  Activity, Map, MessageSquare, Sprout, BookOpen, Scale,
+  Flame, Coins, Orbit, Factory, Globe, Radar, Cpu, ScanFace
+} from 'lucide-react';
+
+const FutureTimeline = () => {
+  const [activeEra, setActiveEra] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+
+  const eras = useMemo(() => [
+    {
+      id: 0,
+      engine: "The Null State",
+      engineIcon: <Anchor size={16} />,
+      title: "The Eternal Now",
+      epoch: "Pre-Life / 13.8 BYA",
+      color: "text-gray-500",
+      bg: "bg-gray-900",
+      narrative: "In a lifeless universe, the 'Future' is a meaningless concept. Matter interacts only in the immediate present. A rock rolling down a hill does not anticipate the valley. Time is simply a sequence of collisions with zero expectation.",
+      insight: "Time exists physically, but not conceptually."
+    },
+    {
+      id: 1,
+      engine: "The Chemical Engine",
+      engineIcon: <Sun size={16} />,
+      title: "The Circadian Loop",
+      epoch: "First Life / 3.5 BYA",
+      color: "text-yellow-400",
+      bg: "bg-yellow-950",
+      narrative: "The first invention of the future. Cyanobacteria evolve 'Circadian Rhythms'—chemical clocks that anticipate the sunrise. Even in the dark, they prepare for the light. This is the first time matter on Earth moves because of something that hasn't happened yet.",
+      insight: "The Future is a chemical reaction."
+    },
+    {
+      id: 2,
+      engine: "The Tidal Engine",
+      engineIcon: <Moon size={16} />,
+      title: "The Pull of the Moon",
+      epoch: "Intertidal Life / ~600 MYA",
+      color: "text-blue-300",
+      bg: "bg-blue-950",
+      narrative: "Life expands its horizon from the Day to the Month. Marine organisms (corals, crabs) develop 'Circalunar Rhythms' to track the tides and moon phases. They anticipate high water for feeding and full moons for spawning weeks in advance.",
+      insight: "The Future is a rhythm (29 Days)."
+    },
+    {
+      id: 3,
+      engine: "The Biological Engine",
+      engineIcon: <Activity size={16} />,
+      title: "The Calorie Gamble",
+      epoch: "Cambrian Explosion / 541 MYA",
+      color: "text-emerald-400",
+      bg: "bg-emerald-950",
+      narrative: "Brains evolve to manage movement. A predator predicts where prey *will be* to avoid wasting calories chasing where it *was*. The future shifts from a passive chemical clock to a split-second active simulation running inside a nervous system.",
+      insight: "The Future is a target (Split-Second)."
+    },
+    {
+      id: 4,
+      engine: "The Ecological Engine",
+      engineIcon: <Map size={16} />,
+      title: "The Seasonal Map",
+      epoch: "Complex Migration / ~200 MYA",
+      color: "text-lime-400",
+      bg: "bg-lime-950",
+      narrative: "Life expands its horizon from 'seconds' to 'seasons'. Herds develop a collective memory of the past—where the water was last year—to navigate the future. They are not just reacting to the moment, but traversing a mental map of time and space.",
+      insight: "The Future is a path (1 Year)."
+    },
+    {
+      id: 5,
+      engine: "The Semantic Engine",
+      engineIcon: <MessageSquare size={16} />,
+      title: "The Grammar of 'If'",
+      epoch: "The Cognitive Revolution / 70,000 BCE",
+      color: "text-cyan-400",
+      bg: "bg-cyan-950",
+      narrative: "Humans invent the 'Subjunctive Mood'—grammar that allows us to speak of things that do not exist. We can now plan a hunt for 'tomorrow' or fear a 'spirit' we never see. The future detaches from immediate sensory input and becomes a shared hallucination.",
+      insight: "The Future is a story."
+    },
+    {
+      id: 6,
+      engine: "The Agrarian Engine",
+      engineIcon: <Sprout size={16} />,
+      title: "The Investment of Pain",
+      epoch: "Agricultural Revolution / 10,000 BCE",
+      color: "text-amber-400",
+      bg: "bg-amber-950",
+      narrative: "We stop chasing the future (hunting) and start planting it (farming). This is the invention of 'Delayed Gratification.' Humans accept the pain of labor *now* for a harvest *later*. The future becomes a contract: Work today, eat tomorrow.",
+      insight: "The Future is a contract."
+    },
+    {
+      id: 7,
+      engine: "The Archival Engine",
+      engineIcon: <BookOpen size={16} />,
+      title: "The Frozen Past",
+      epoch: "Invention of Writing / 3,400 BCE",
+      color: "text-indigo-400",
+      bg: "bg-indigo-950",
+      narrative: "Writing stabilizes the past. Instead of myths that change every generation, we have records. By seeing a stable Past, we gain the audacity to calculate a stable Future. We begin charting astronomical cycles and tax harvests years in advance.",
+      insight: "The Future is a schedule."
+    },
+    {
+      id: 8,
+      engine: "The Legal Engine",
+      engineIcon: <Scale size={16} />,
+      title: "The Binding Promise",
+      epoch: "Code of Hammurabi / 1750 BCE",
+      color: "text-rose-400",
+      bg: "bg-rose-950",
+      narrative: "Civilization requires more than just predicting the future; it requires *binding* it. We invent the 'Contract'—a tool that forces the future to happen. A promise ('I will pay you next month') becomes enforceable by the state. The future becomes an obligation.",
+      insight: "The Future is an obligation."
+    },
+    {
+      id: 9,
+      engine: "The Mythic Engine",
+      engineIcon: <Flame size={16} />,
+      title: "The Judgment of Time",
+      epoch: "Axial Age / 800 BCE",
+      color: "text-orange-300",
+      bg: "bg-orange-950",
+      narrative: "Once we can farm and write, we start imagining the ultimate harvest—the End Times, the Golden Age, the Final Judgment. The future becomes morally loaded. It is no longer just what *will* happen, but what *should* happen.",
+      insight: "The Future is a judgment."
+    },
+    {
+      id: 10,
+      engine: "The Risk Engine",
+      engineIcon: <Coins size={16} />,
+      title: "The Price of Tomorrow",
+      epoch: "Joint-Stock Companies / 1602 AD",
+      color: "text-green-400",
+      bg: "bg-green-950",
+      narrative: "With the Dutch East India Company, the future becomes a tradeable asset. We use probability and insurance to price the unknown. You can buy a 'share' of a future outcome without taking the voyage. Risk is distributed. The future becomes liquid capital.",
+      insight: "The Future is equity."
+    },
+    {
+      id: 11,
+      engine: "The Deterministic Engine",
+      engineIcon: <Orbit size={16} />,
+      title: "The Clockwork Universe",
+      epoch: "Scientific Revolution / 1687 AD",
+      color: "text-violet-400",
+      bg: "bg-violet-950",
+      narrative: "Newtonian physics suggests the universe is a predictable machine. If we know the position of every atom, we can calculate the future perfectly. We begin to swap appeasing the future (ritual) for calculating it (science).",
+      insight: "The Future is a formula."
+    },
+    {
+      id: 12,
+      engine: "The Industrial Engine",
+      engineIcon: <Factory size={16} />,
+      title: "The Break in the Circle",
+      epoch: "Industrial Revolution / 1760 AD",
+      color: "text-orange-400",
+      bg: "bg-orange-950",
+      narrative: "For thousands of years, life was cyclical. Suddenly, machines break the cycle. We realize our children's lives will be fundamentally different from ours. 'Progress' is invented. The future is no longer a repetition of the past; it is an upward line.",
+      insight: "The Future is a project."
+    },
+    {
+      id: 13,
+      engine: "The Synchronization Engine",
+      engineIcon: <Globe size={16} />,
+      title: "The Standardized Grid",
+      epoch: "Railroad Time / 1847 AD",
+      color: "text-teal-400",
+      bg: "bg-teal-950",
+      narrative: "Trains travel faster than the sun. To prevent collisions, we abolish local solar time and invent 'Standard Time' and Time Zones. The future ceases to be a local phenomenon; it becomes a synchronized global grid that everyone must obey.",
+      insight: "The Future is a coordinated grid."
+    },
+    {
+      id: 14,
+      engine: "The Strategic Engine",
+      engineIcon: <Radar size={16} />,
+      title: "The Scenario Planner",
+      epoch: "Cold War Futurism / 1950s",
+      color: "text-red-400",
+      bg: "bg-red-950",
+      narrative: "The RAND Corporation formalizes 'Future Studies.' Facing nuclear annihilation, we realize the future isn't just 'Progress'—it's a branching tree of probabilities. We use Game Theory and Scenario Planning to navigate the 'unthinkable.'",
+      insight: "The Future is a branching probability."
+    },
+    {
+      id: 15,
+      engine: "The Computational Engine",
+      engineIcon: <Cpu size={16} />,
+      title: "The Simulated Oracle",
+      epoch: "The Digital Age / Today",
+      color: "text-fuchsia-400",
+      bg: "bg-fuchsia-950",
+      narrative: "We no longer just predict; we simulate. We model climate change 100 years out. We live in 'Pre-Traumatic Stress,' worrying about data models of futures that haven't happened. We inhabit the future mentally more than we inhabit the present physically.",
+      insight: "The Future is a simulation."
+    },
+    {
+      id: 16,
+      engine: "The Algorithmic Engine",
+      engineIcon: <ScanFace size={16} />,
+      title: "The Predictive Feed",
+      epoch: "The Algorithmic Era / Now",
+      color: "text-pink-400",
+      bg: "bg-pink-950",
+      narrative: "The loop closes. In the Cambrian Era, biology evolved to predict the world. Now, the world (AI) has evolved to predict us. Algorithms know what we will want before we want it. The future is no longer open; it is curated, nudged, and served to us.",
+      insight: "The Future is curated."
+    }
+  ], []);
+
+  useEffect(() => {
+    let interval;
+    if (isAutoPlaying) {
+      interval = setInterval(() => {
+        setActiveEra((prev) => (prev + 1) % eras.length);
+      }, 8000);
+    }
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, eras.length]);
+
+  // Memoized particle positions to prevent flickering on re-renders
+  const particleMap = useMemo(() => {
+    const generate = (count) => [...Array(count)].map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: Math.random() * 5 + 5
+    }));
+    return {
+      cosmos: generate(50),
+      ocean: generate(20),
+      migration: generate(40),
+      sim: generate(30)
+    };
+  }, []);
+
+  const handleNext = () => setActiveEra((prev) => (prev + 1) % eras.length);
+  const handlePrev = () => setActiveEra((prev) => (prev - 1 + eras.length) % eras.length);
+
+  return (
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-white/20 flex flex-col md:flex-row overflow-hidden relative">
+      {/* Left Rail: Navigation & Context */}
+      <div className={`w-full md:w-1/3 border-r border-white/10 flex flex-col justify-between transition-colors duration-700 ${eras[activeEra].bg} bg-opacity-20`}>
+        <div className="p-6 h-[calc(100vh-80px)] overflow-y-auto custom-scrollbar">
+          <h1 className="text-xs font-bold tracking-[0.2em] uppercase text-white/40 mb-8 flex items-center gap-2 sticky top-0 bg-black/0 backdrop-blur-sm py-4 z-20">
+            <Activity size={14} /> The Architecture of Time
+          </h1>
+
+          {/* Era List (Desktop) */}
+          <div className="hidden md:flex flex-col gap-2 relative pl-4">
+             {/* Connecting Line */}
+            <div className="absolute left-[27px] top-4 bottom-4 w-px bg-white/10 z-0"></div>
+
+            {eras.map((era, idx) => (
+              <button
+                key={era.id}
+                onClick={() => setActiveEra(idx)}
+                className={`z-10 flex items-center gap-4 text-left group transition-all duration-300 py-2 ${idx === activeEra ? 'opacity-100 translate-x-2' : 'opacity-40 hover:opacity-70'}`}
+              >
+                <div className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-500 shrink-0 ${idx === activeEra ? `bg-black ${era.color} border-current scale-125 shadow-[0_0_10px_currentColor]` : 'bg-black border-white/20 text-transparent'}`}>
+                  <span className="text-[9px] font-bold">{idx}</span>
+                </div>
+                <div>
+                  <div className={`text-[10px] uppercase tracking-wider font-bold ${idx === activeEra ? era.color : 'text-white'}`}>{era.engine}</div>
+                  <div className="text-[10px] text-white/40">{era.title}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="p-6 border-t border-white/10 bg-black/40 backdrop-blur-md h-[80px] flex items-center">
+          <div className="flex items-center justify-between gap-4 w-full">
+            <button onClick={handlePrev} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowLeft size={20}/></button>
+            <button onClick={() => setIsAutoPlaying(!isAutoPlaying)} className="flex-grow flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-bold py-3 rounded-full hover:bg-white/10 transition-colors border border-white/10">
+              {isAutoPlaying ? <Pause size={14}/> : <Play size={14}/>}
+              {isAutoPlaying ? 'PAUSE' : 'PLAY'}
+            </button>
+            <button onClick={handleNext} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content: The Narrative */}
+      <div className="w-full md:w-2/3 relative flex flex-col">
+
+        {/* Abstract Background */}
+        <div className="absolute inset-0 overflow-hidden">
+           <BackgroundVisuals
+             key={`bg-${activeEra}`}
+             activeEra={activeEra}
+             color={eras[activeEra].color}
+             particles={particleMap}
+           />
+           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent md:bg-gradient-to-r md:from-black md:via-black/50 md:to-transparent"></div>
+        </div>
+
+        <div className="relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 max-w-4xl">
+
+          {/* Engine Tag */}
+          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-6 animate-fadeIn`}>
+            <span className={`${eras[activeEra].color}`}>{eras[activeEra].engineIcon}</span>
+            <span className={`text-xs font-mono uppercase tracking-wider ${eras[activeEra].color}`}>
+              {eras[activeEra].engine}
+            </span>
+          </div>
+
+          {/* Title */}
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
+            {eras[activeEra].title}
+          </h2>
+
+          {/* Epoch Badge */}
+          <div className="mb-8 opacity-50 font-mono text-sm border-l border-white/30 pl-3">
+            {eras[activeEra].epoch}
+          </div>
+
+          {/* Narrative */}
+          <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed mb-12 max-w-2xl">
+            {eras[activeEra].narrative}
+          </p>
+
+          {/* The "Insight" Box */}
+          <div className={`border-l-4 ${eras[activeEra].color.replace('text', 'border')} pl-6 py-2`}>
+            <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">The Paradigm Shift</p>
+            <p className="text-xl md:text-2xl text-white font-medium">{eras[activeEra].insight}</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const BackgroundVisuals = ({ activeEra, color, particles }) => {
+  const shapeColor = color.replace('text-', 'bg-');
+  const borderColor = color.replace('text-', 'border-');
+
+  return (
+    <div className="w-full h-full relative opacity-20 animate-fadeIn">
+
+      {/* 0. Void */}
+      {activeEra === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center">
+           <div className="w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+           {particles.cosmos.map((p) => (
+             <div
+               key={`cosmos-${p.id}`}
+               className="absolute w-1 h-1 bg-white/30 rounded-full animate-float"
+               style={{
+                 left: `${p.left}%`,
+                 top: `${p.top}%`,
+                 animationDelay: `${p.delay}s`
+               }}
+             />
+           ))}
+           <div className="absolute font-mono text-[20rem] opacity-5 font-bold select-none">0</div>
+        </div>
+      )}
+
+      {/* 1. Chemical / Circadian */}
+      {activeEra === 1 && (
+        <div className="absolute inset-0">
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className={`w-[500px] h-[500px] rounded-full border border-dashed ${borderColor} opacity-20 animate-spin-slow`}></div>
+           </div>
+           <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 ${shapeColor} blur-2xl animate-pulse`}></div>
+           <div className="absolute bottom-10 right-10 text-9xl opacity-10 font-serif">SUN</div>
+        </div>
+      )}
+
+      {/* 2. Tidal / Lunar */}
+      {activeEra === 2 && (
+        <div className="absolute inset-0 overflow-hidden">
+           <div className={`absolute bottom-0 w-full h-1/2 ${shapeColor} opacity-20 blur-3xl animate-pulseSlow`}></div>
+           <div className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full border-2 border-white/20 overflow-hidden">
+              <div className="w-full h-full bg-white/10 rounded-full absolute -left-1/2 animate-pulse"></div>
+           </div>
+           <div className="absolute bottom-20 right-20 text-8xl opacity-10 font-serif tracking-widest">TIDE</div>
+           {particles.ocean.map((p) => (
+             <div
+               key={`ocean-${p.id}`}
+               className={`absolute w-1 h-1 ${shapeColor} rounded-full animate-float`}
+               style={{
+                 left: `${p.left}%`,
+                 top: `${p.top}%`,
+                 animationDelay: `${p.delay}s`
+               }}
+             />
+           ))}
+        </div>
+      )}
+
+      {/* 3. Biological / Predator */}
+      {activeEra === 3 && (
+        <div className="absolute inset-0">
+           <div className={`absolute w-4 h-4 ${shapeColor} top-1/3 left-1/4 rounded-full animate-ping`}></div>
+           <div className={`absolute w-2 h-2 ${shapeColor} top-2/3 left-3/4 rounded-full animate-ping`} style={{animationDelay: '0.5s'}}></div>
+           <svg className="absolute inset-0 w-full h-full">
+              <line x1="25%" y1="33%" x2="75%" y2="66%" stroke="currentColor" strokeWidth="1" strokeDasharray="5,5" className={`opacity-20 animate-dash ${color.replace('text-', 'text-')}`} />
+           </svg>
+        </div>
+      )}
+
+      {/* 4. Ecological / Migration */}
+      {activeEra === 4 && (
+        <div className="absolute inset-0 overflow-hidden">
+           {particles.migration.map((p) => (
+             <div
+               key={`migration-${p.id}`}
+               className={`absolute w-1 h-1 ${shapeColor} rounded-full animate-migration opacity-60`}
+               style={{
+                 left: '-20px',
+                 top: `${p.top}%`,
+                 animationDelay: `${p.id * 0.2}s`,
+                 animationDuration: `${p.duration}s`
+               }}
+             />
+           ))}
+           <svg className="absolute inset-0 w-full h-full pointer-events-none">
+             <path
+               d="M-100,500 C200,400 400,600 800,300 S1200,400 1500,200"
+               fill="none"
+               stroke="currentColor"
+               strokeWidth="2"
+               className={`opacity-20 ${color.replace('text-', 'text-')}`}
+               strokeDasharray="10,10"
+             />
+           </svg>
+           <div className="absolute top-20 left-20 text-8xl opacity-10 font-serif tracking-widest">PATH</div>
+        </div>
+      )}
+
+      {/* 5. Semantic / Speech */}
+      {activeEra === 5 && (
+        <div className="absolute inset-0 flex items-center justify-center">
+           <div className="absolute text-9xl font-serif opacity-5 top-20 left-20">?</div>
+           <div className="absolute text-9xl font-serif opacity-5 bottom-20 right-20">!</div>
+           <div className={`w-[600px] h-[600px] border ${borderColor} rounded-full opacity-10 animate-pulse flex items-center justify-center`}>
+              <div className={`w-[400px] h-[400px] border border-dashed ${borderColor} rounded-full animate-spin-reverse-slow`}></div>
+           </div>
+        </div>
+      )}
+
+      {/* 6. Agrarian / Seed */}
+      {activeEra === 6 && (
+        <div className="absolute inset-0 flex items-center justify-center">
+           <div className={`absolute bottom-0 w-full h-1/3 ${shapeColor} opacity-30`}></div>
+           <div className="relative flex flex-col items-center">
+             <div className={`w-2 ${shapeColor} animate-grow`}></div>
+             <div className={`absolute bottom-0 w-4 h-4 ${shapeColor} rounded-full`}></div>
+           </div>
+           <div className="absolute top-20 right-20 text-8xl opacity-10 font-serif">SEED</div>
+           {[...Array(10)].map((_, i) => (
+             <div key={`seed-${i}`} className={`absolute bottom-0 w-px h-32 ${shapeColor} opacity-30`} style={{left: i * 10 + '%'}}></div>
+           ))}
+        </div>
+      )}
+
+      {/* 7. Archival / Writing */}
+      {activeEra === 7 && (
+        <div className="absolute inset-0 flex flex-col justify-center gap-8 p-20 transform -skew-x-12 opacity-30">
+            {[...Array(5)].map((_, i) => (
+               <div key={`archive-${i}`} className={`h-2 w-full ${shapeColor} rounded-full`} style={{opacity: 1 - (i * 0.2)}}></div>
+            ))}
+             <div className="absolute right-20 bottom-20 text-9xl opacity-10 font-mono">REC</div>
+        </div>
+      )}
+
+      {/* 8. Legal / Contracts */}
+      {activeEra === 8 && (
+        <div className="absolute inset-0 flex items-center justify-center">
+           <div className="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-4 p-20 opacity-30">
+             {[...Array(16)].map((_, i) => (
+                <div key={`legal-${i}`} className={`border border-white/20 flex items-center justify-center`}>
+                  <div className={`w-2 h-2 ${shapeColor} rounded-sm`}></div>
+                </div>
+             ))}
+           </div>
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className={`w-[500px] h-[500px] border-4 border-double ${borderColor} opacity-20`}></div>
+           </div>
+           <div className="absolute bottom-20 left-20 text-8xl opacity-10 font-serif">LAW</div>
+        </div>
+      )}
+
+      {/* 9. Mythic / Judgment */}
+      {activeEra === 9 && (
+        <div className="absolute inset-0 flex items-center justify-center">
+           <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(255,255,255,0.1)_0%,transparent_70%)] animate-pulseSlow`}></div>
+           <div className={`absolute top-0 w-1 h-full ${shapeColor} opacity-20`}></div>
+           <div className={`absolute top-1/3 w-64 h-64 border-t-2 border-b-2 ${borderColor} rounded-full animate-spin-slow opacity-30`}></div>
+           <div className="absolute bottom-20 right-20 text-8xl opacity-10 font-serif">JUDGE</div>
+        </div>
+      )}
+
+      {/* 10. Risk / Equity */}
+      {activeEra === 10 && (
+        <div className="absolute inset-0 flex items-center justify-center gap-1 opacity-30">
+            {[20, 40, 30, 60, 50, 80, 90, 70, 100].map((h, i) => (
+               <div key={`risk-${i}`} className={`w-8 ${shapeColor} transition-all duration-1000`} style={{height: h + '%'}}></div>
+            ))}
+            <div className="absolute top-20 right-20 text-8xl opacity-10 font-serif">RISK</div>
+        </div>
+      )}
+
+      {/* 11. Deterministic / Physics */}
+      {activeEra === 11 && (
+        <div className="absolute inset-0 flex items-center justify-center">
+           <div className={`w-[600px] h-[600px] border ${borderColor} rounded-full animate-spin-slow opacity-20`}></div>
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className={`w-[400px] h-[400px] border ${borderColor} rounded-full animate-spin-slow opacity-20`} style={{animationDuration: '15s'}}></div>
+           </div>
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className={`w-[200px] h-[200px] border ${borderColor} rounded-full animate-spin-slow opacity-20`} style={{animationDuration: '5s'}}></div>
+           </div>
+           <div className="absolute w-full h-px bg-white/10 rotate-45"></div>
+           <div className="absolute w-full h-px bg-white/10 -rotate-45"></div>
+        </div>
+      )}
+
+      {/* 12. Industrial / Progress */}
+      {activeEra === 12 && (
+        <div className="absolute inset-0 flex items-end">
+           <div className={`w-full h-1/2 ${shapeColor} opacity-20`}></div>
+           <svg className="absolute inset-0 w-full h-full">
+              <path d="M0,600 Q400,550 600,400 T1200,100" fill="none" stroke="currentColor" strokeWidth="2" className={`${color.replace('text-', 'text-')} opacity-30`} />
+           </svg>
+           <div className="absolute right-20 top-20 text-9xl opacity-10 font-bold">+</div>
+        </div>
+      )}
+
+      {/* 13. Synchronization / Railroads */}
+      {activeEra === 13 && (
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+           <div className="absolute inset-0 grid grid-cols-6 grid-rows-1 opacity-20">
+             {[...Array(6)].map((_, i) => (
+               <div key={`sync-${i}`} className={`border-r ${borderColor} flex items-center justify-center`}>
+                 <div className={`w-1 h-full ${shapeColor} opacity-50 animate-pulse`} style={{animationDelay: `${i * 0.2}s`}}></div>
+               </div>
+             ))}
+           </div>
+           <div className="absolute w-[150%] h-1 bg-white/20 rotate-12"></div>
+           <div className="absolute w-[150%] h-1 bg-white/20 -rotate-12"></div>
+           <div className="text-[10rem] font-mono opacity-5 tracking-tighter">00:00</div>
+        </div>
+      )}
+
+      {/* 14. Strategic / Cold War */}
+      {activeEra === 14 && (
+        <div className="absolute inset-0 flex items-center justify-center">
+           <div className={`w-[600px] h-[600px] border border-white/10 rounded-full flex items-center justify-center relative overflow-hidden`}>
+             <div className={`absolute inset-0 opacity-20 animate-spin-slow`} style={{
+               background: `conic-gradient(from 0deg, transparent 0deg 300deg, ${color.includes('red') ? '#f87171' : '#ffffff'} 360deg)`
+             }}></div>
+             <div className="grid grid-cols-2 gap-20 opacity-30">
+               <div className={`w-4 h-4 ${shapeColor} rounded-full`}></div>
+               <div className={`w-4 h-4 ${shapeColor} rounded-full`}></div>
+               <div className={`w-4 h-4 ${shapeColor} rounded-full`}></div>
+               <div className={`w-4 h-4 ${shapeColor} rounded-full`}></div>
+             </div>
+           </div>
+           <div className="absolute top-20 right-20 text-8xl opacity-10 font-mono">DEFCON</div>
+        </div>
+      )}
+
+      {/* 15. Computational / Sim */}
+      {activeEra === 15 && (
+        <div className="absolute inset-0 overflow-hidden">
+           {particles.sim.map((p) => (
+             <div
+               key={`sim-${p.id}`}
+               className={`absolute w-1 h-1 bg-white/30 rounded-full animate-float`}
+               style={{
+                 left: `${p.left}%`,
+                 top: `${p.top}%`,
+                 animationDelay: `${p.delay}s`
+               }}
+             />
+           ))}
+           <div className="absolute inset-0 bg-[linear-gradient(0deg,transparent_0%,rgba(255,255,255,0.05)_50%,transparent_100%)] bg-[length:100%_4px] animate-scan"></div>
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className="w-[600px] h-[600px] border-[200px] border-white/5 rounded-full animate-pulseSlow"></div>
+           </div>
+        </div>
+      )}
+
+      {/* 16. Algorithmic / Feed */}
+      {activeEra === 16 && (
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 flex flex-col gap-2 p-10 opacity-30">
+            {[...Array(10)].map((_, i) => (
+              <div key={`feed-${i}`} className={`w-full h-32 border ${borderColor} rounded-xl flex items-center p-4 gap-4 animate-slideUp`} style={{animationDelay: `${i * 0.1}s`}}>
+                <div className={`w-12 h-12 rounded-full bg-white/10`}></div>
+                <div className="flex-grow space-y-2">
+                  <div className="h-2 w-3/4 bg-white/10 rounded"></div>
+                  <div className="h-2 w-1/2 bg-white/10 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="absolute text-9xl font-bold opacity-10 select-none">NEXT</div>
+          <div className="absolute w-32 h-32 border-4 border-white/20 rounded-full flex items-center justify-center animate-pulse">
+            <div className={`w-4 h-4 ${shapeColor} rounded-full`}></div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+};
+
+export default FutureTimeline;
