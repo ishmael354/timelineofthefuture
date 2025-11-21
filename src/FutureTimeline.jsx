@@ -24,8 +24,8 @@ const FutureTimeline = () => {
       engineIcon: <Activity size={16} />,
       title: "The Architecture of Time",
       epoch: "How Humans Invented \"The Future\"",
-      color: "text-white",
-      bg: "bg-black",
+      color: "text-green-400",
+      bg: "bg-gray-900",
       narrative: "We talk about the future like it's a single thing. It isn't. Over billions of years, life has slowly hacked its way from chemical clocks in bacteria to algorithmic feeds on our phones—each era building a new \"engine\" for predicting, controlling, or selling tomorrow. This timeline is a guided tour through those engines: from circadian rhythms and migration routes to contracts, corporations, simulations, and curated feeds.",
       insight: "When we say \"the future,\" what are we actually talking about—a rhythm, a contract, an obligation, an asset, a simulation, or a script someone else is writing for us?",
       isIntro: true
@@ -259,14 +259,17 @@ const FutureTimeline = () => {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       try {
+        // Calculate audio index (intro is at position 0, so subtract 1 for actual era audio)
+        const audioIndex = activeEra - 1;
+
         // Step 1: Start ambient sound first
-        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3`);
+        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${audioIndex}.mp3`);
         ambient.loop = true;
         ambient.volume = 0; // Start at 0 for fade-in
         ambientRef.current = ambient;
 
         await ambient.play();
-        console.log(`Playing ambient sound for era ${activeEra}`);
+        console.log(`Playing ambient sound for era ${audioIndex} (slide ${activeEra})`);
 
         // Fade in ambient
         const fadeIn = setInterval(() => {
@@ -280,12 +283,12 @@ const FutureTimeline = () => {
         // Step 2: Wait 2 seconds, then play voiceover
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${activeEra}.mp3`);
+        const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${audioIndex}.mp3`);
         voiceover.volume = isMuted ? 0 : 0.8;
         voiceoverRef.current = voiceover;
 
         await voiceover.play();
-        console.log(`Playing voiceover for era ${activeEra}`);
+        console.log(`Playing voiceover for era ${audioIndex} (slide ${activeEra})`);
 
       } catch (error) {
         console.warn(`Audio playback error for era ${activeEra}:`, error.message);
@@ -431,30 +434,36 @@ const FutureTimeline = () => {
         <div className="p-6 border-t border-white/10 bg-black/40 backdrop-blur-md h-[80px] flex items-center">
           <div className="flex items-center justify-between gap-4 w-full">
             <button onClick={handlePrev} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowLeft size={20}/></button>
-            <button onClick={() => setIsAutoPlaying(!isAutoPlaying)} className="flex-grow flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-bold py-3 rounded-full hover:bg-white/10 transition-colors border border-white/10">
-              {isAutoPlaying ? <Pause size={14}/> : <Play size={14}/>}
-              {isAutoPlaying ? 'PAUSE' : 'START EXPERIENCE'}
-            </button>
-            <button onClick={handleNext} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
             <button
               onClick={() => {
                 if (!audioEnabled) {
                   setAudioEnabled(true);
+                  setIsAutoPlaying(true);
                 } else {
-                  setIsMuted(!isMuted);
+                  setIsAutoPlaying(!isAutoPlaying);
                 }
               }}
-              className={`p-3 rounded-full transition-colors ${
+              className={`flex-grow flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-bold py-3 rounded-full transition-colors border ${
                 !audioEnabled
-                  ? 'bg-green-500/20 hover:bg-green-500/30 animate-pulse'
-                  : isMuted
-                    ? 'bg-red-500/20 hover:bg-red-500/30'
-                    : 'hover:bg-white/10'
+                  ? 'bg-green-500/20 hover:bg-green-500/30 border-green-500/40 animate-pulse'
+                  : 'hover:bg-white/10 border-white/10'
               }`}
-              aria-label={!audioEnabled ? 'Enable Audio' : isMuted ? 'Unmute' : 'Mute'}
-              title={!audioEnabled ? 'Click to enable audio' : isMuted ? 'Unmute' : 'Mute'}
             >
-              {!audioEnabled ? <Volume2 size={20} className="text-green-400"/> : isMuted ? <VolumeX size={20}/> : <Volume2 size={20}/>}
+              {!audioEnabled ? <Play size={14}/> : isAutoPlaying ? <Pause size={14}/> : <Play size={14}/>}
+              {!audioEnabled ? 'START EXPERIENCE' : isAutoPlaying ? 'PAUSE' : 'START EXPERIENCE'}
+            </button>
+            <button onClick={handleNext} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
+            <button
+              onClick={() => setIsMuted(!isMuted)}
+              className={`p-3 rounded-full transition-colors ${
+                isMuted
+                  ? 'bg-red-500/20 hover:bg-red-500/30'
+                  : 'hover:bg-white/10'
+              }`}
+              aria-label={isMuted ? 'Unmute' : 'Mute'}
+              title={isMuted ? 'Unmute' : 'Mute'}
+            >
+              {isMuted ? <VolumeX size={20}/> : <Volume2 size={20}/>}
             </button>
           </div>
         </div>
