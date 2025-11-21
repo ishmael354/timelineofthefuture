@@ -10,6 +10,7 @@ const FutureTimeline = () => {
   const [activeEra, setActiveEra] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(false);
 
   // Audio refs
   const backgroundMusicRef = useRef(null);
@@ -218,6 +219,8 @@ const FutureTimeline = () => {
 
   // Audio playback effect
   useEffect(() => {
+    if (!audioEnabled) return; // Don't play audio until user enables it
+
     const playAudio = async () => {
       // Stop current voiceover and ambient
       if (voiceoverRef.current) {
@@ -247,9 +250,8 @@ const FutureTimeline = () => {
         voiceover.volume = isMuted ? 0 : 0.8;
         voiceoverRef.current = voiceover;
 
-        voiceover.play().catch(() => {
-          // File doesn't exist or can't play, that's okay
-          console.log(`No voiceover for era ${activeEra}`);
+        voiceover.play().catch((error) => {
+          console.log(`No voiceover for era ${activeEra}:`, error.message);
         });
 
         // Ambient sound (looping)
@@ -288,10 +290,12 @@ const FutureTimeline = () => {
         ambientRef.current.pause();
       }
     };
-  }, [activeEra, isMuted]);
+  }, [activeEra, isMuted, audioEnabled]);
 
-  // Background music effect - starts on first user interaction
+  // Background music effect - starts when audio is enabled
   useEffect(() => {
+    if (!audioEnabled) return;
+
     const startBackgroundMusic = () => {
       if (!backgroundMusicRef.current) {
         const music = new Audio('/timelineofthefuture/audio/music/background.mp3');
@@ -302,30 +306,17 @@ const FutureTimeline = () => {
         music.play().then(() => {
           console.log('Background music started successfully');
         }).catch((error) => {
-          console.warn('Background music blocked by browser - will retry on next interaction:', error.message);
+          console.warn('Background music error:', error.message);
         });
       } else if (backgroundMusicRef.current.paused) {
-        // If music exists but is paused, try to play it
-        backgroundMusicRef.current.play().catch(() => {
-          console.log('Background music still blocked');
+        backgroundMusicRef.current.play().catch((error) => {
+          console.log('Background music playback error:', error.message);
         });
       }
     };
 
-    // Try to start music immediately
     startBackgroundMusic();
-
-    // Also add click listener to retry if blocked
-    const handleClick = () => {
-      startBackgroundMusic();
-    };
-
-    document.addEventListener('click', handleClick, { once: true });
-
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  }, [isMuted]);
+  }, [audioEnabled, isMuted]);
 
   // Mute/unmute effect
   useEffect(() => {
@@ -402,11 +393,24 @@ const FutureTimeline = () => {
             </button>
             <button onClick={handleNext} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
             <button
-              onClick={() => setIsMuted(!isMuted)}
-              className={`p-3 rounded-full transition-colors ${isMuted ? 'bg-red-500/20 hover:bg-red-500/30' : 'hover:bg-white/10'}`}
-              aria-label={isMuted ? 'Unmute' : 'Mute'}
+              onClick={() => {
+                if (!audioEnabled) {
+                  setAudioEnabled(true);
+                } else {
+                  setIsMuted(!isMuted);
+                }
+              }}
+              className={`p-3 rounded-full transition-colors ${
+                !audioEnabled
+                  ? 'bg-green-500/20 hover:bg-green-500/30 animate-pulse'
+                  : isMuted
+                    ? 'bg-red-500/20 hover:bg-red-500/30'
+                    : 'hover:bg-white/10'
+              }`}
+              aria-label={!audioEnabled ? 'Enable Audio' : isMuted ? 'Unmute' : 'Mute'}
+              title={!audioEnabled ? 'Click to enable audio' : isMuted ? 'Unmute' : 'Mute'}
             >
-              {isMuted ? <VolumeX size={20}/> : <Volume2 size={20}/>}
+              {!audioEnabled ? <Volume2 size={20} className="text-green-400"/> : isMuted ? <VolumeX size={20}/> : <Volume2 size={20}/>}
             </button>
           </div>
         </div>
