@@ -18,6 +18,7 @@ const FutureTimeline = () => {
   const backgroundMusicRef = useRef(null);
   const voiceoverRef = useRef(null);
   const ambientRef = useRef(null);
+  const currentMusicTrackRef = useRef(null); // Track which music is playing
 
   const eras = useMemo(() => [
     {
@@ -310,18 +311,19 @@ const FutureTimeline = () => {
     };
   }, [activeEra, isMuted, audioEnabled, eras]);
 
-  // Background music effect - starts when audio is enabled and changes with era
+  // Background music effect - starts when audio is enabled, only switches at era 10
   useEffect(() => {
     if (!audioEnabled) return;
 
     const startOrSwitchBackgroundMusic = async () => {
       // Determine which music track to use based on era
       // Change music at era 10 (midpoint) for a shift in tone
-      const musicTrack = activeEra >= 10 ? 'background-2.mp3' : 'background.mp3';
-      const musicPath = `/timelineofthefuture/audio/music/${musicTrack}`;
+      const musicTrack = activeEra >= 10 ? 'background-2' : 'background';
 
-      // If music doesn't exist or we need to switch tracks
-      if (!backgroundMusicRef.current || backgroundMusicRef.current.src !== musicPath) {
+      // Only start or switch if we don't have music playing OR we need to switch tracks
+      const needsSwitch = currentMusicTrackRef.current !== musicTrack;
+
+      if (!backgroundMusicRef.current || needsSwitch) {
         // Fade out old music if it exists
         if (backgroundMusicRef.current) {
           const oldMusic = backgroundMusicRef.current;
@@ -338,13 +340,15 @@ const FutureTimeline = () => {
         }
 
         // Start new music
+        const musicPath = `/timelineofthefuture/audio/music/${musicTrack}.mp3`;
         const music = new Audio(musicPath);
         music.loop = true;
         music.volume = 0; // Start at 0 for fade-in
         backgroundMusicRef.current = music;
+        currentMusicTrackRef.current = musicTrack;
 
         music.play().then(() => {
-          console.log(`Background music (${musicTrack}) started successfully`);
+          console.log(`Background music (${musicTrack}.mp3) started successfully`);
           // Fade in
           const fadeIn = setInterval(() => {
             if (backgroundMusicRef.current && backgroundMusicRef.current.volume < (isMuted ? 0 : 0.2)) {

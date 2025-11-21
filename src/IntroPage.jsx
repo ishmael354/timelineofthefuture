@@ -22,7 +22,7 @@ const IntroPage = ({ onStart }) => {
           100% { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in {
-          animation: fade-in-up 1s ease-out forwards;
+          animation: fade-in-up 0.8s ease-out forwards;
         }
 
         @keyframes glow-pulse {
@@ -45,7 +45,7 @@ const IntroPage = ({ onStart }) => {
       <div className="relative z-20 max-w-4xl px-6 text-center space-y-12">
 
         {/* Header Section */}
-        <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0s' }}>
           <div className="inline-block px-3 py-1 border border-white/20 rounded-full text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">
             Interactive Timeline
           </div>
@@ -58,9 +58,9 @@ const IntroPage = ({ onStart }) => {
         </div>
 
         {/* The Divider / Insight */}
-        <div className="w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.5s' }}></div>
+        <div className="w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.3s' }}></div>
 
-        <div className="animate-fade-in" style={{ animationDelay: '0.7s' }}>
+        <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <p className="text-xl md:text-2xl font-serif italic text-gray-300 max-w-3xl mx-auto leading-relaxed">
             "We talk about the future like it's a place we are going to. <br/>
             But the future is not a destination. It is a tool we built."
@@ -68,7 +68,7 @@ const IntroPage = ({ onStart }) => {
         </div>
 
         {/* CTA Button */}
-        <div className="pt-8 animate-fade-in" style={{ animationDelay: '1s' }}>
+        <div className="pt-8 animate-fade-in" style={{ animationDelay: '0.7s' }}>
           <button
             onClick={onStart}
             className="group relative px-8 py-4 bg-white text-black font-bold tracking-widest uppercase text-sm hover:bg-gray-200 transition-all duration-300 flex items-center gap-3 mx-auto"
@@ -85,7 +85,7 @@ const IntroPage = ({ onStart }) => {
 
       {/* --- FOOTER: BRANDING --- */}
       {/* Sleek integration of The Future Concern Logo */}
-      <div className="absolute bottom-10 flex flex-col items-center gap-4 animate-fade-in" style={{ animationDelay: '1.5s' }}>
+      <div className="absolute bottom-10 flex flex-col items-center gap-4 animate-fade-in" style={{ animationDelay: '0.9s' }}>
         <p className="text-[10px] uppercase tracking-[0.2em] text-white/30">
           Presented By
         </p>
