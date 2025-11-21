@@ -12,7 +12,6 @@ const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [showEnd, setShowEnd] = useState(false);
   const [activeEra, setActiveEra] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
 
@@ -212,23 +211,6 @@ const FutureTimeline = () => {
     }
   ], []);
 
-  useEffect(() => {
-    let interval;
-    if (isAutoPlaying) {
-      interval = setInterval(() => {
-        setActiveEra((prev) => {
-          if (prev === eras.length - 1) {
-            // We're at the last era, show end page
-            setShowEnd(true);
-            setIsAutoPlaying(false);
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, 90000); // 90 seconds - enough time for voice-overs to complete
-    }
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, eras.length]);
 
   // Audio playback effect with proper sequencing
   useEffect(() => {
@@ -312,7 +294,7 @@ const FutureTimeline = () => {
     const startOrSwitchBackgroundMusic = async () => {
       // Determine which music track to use based on era
       // Change music at era 10 (midpoint) for a shift in tone
-      const musicTrack = activeEra >= 10 ? 'background-2' : 'background';
+      const musicTrack = activeEra >= 10 ? 'background-1' : 'background';
 
       // Only start or switch if we don't have music playing OR we need to switch tracks
       const needsSwitch = currentMusicTrackRef.current !== musicTrack;
@@ -399,7 +381,6 @@ const FutureTimeline = () => {
     if (activeEra === eras.length - 1) {
       // We're at the last era, show end page
       setShowEnd(true);
-      setIsAutoPlaying(false);
     } else {
       setActiveEra((prev) => prev + 1);
     }
@@ -411,14 +392,12 @@ const FutureTimeline = () => {
     setShowIntro(false);
     setActiveEra(0); // Start at first era (The Eternal Now)
     setAudioEnabled(true);
-    setIsAutoPlaying(true);
   };
 
   const handleRestart = () => {
     setShowEnd(false);
     setShowIntro(true);
     setActiveEra(0);
-    setIsAutoPlaying(false);
     setAudioEnabled(false);
     // Stop all audio
     if (backgroundMusicRef.current) {
@@ -479,24 +458,18 @@ const FutureTimeline = () => {
         <div className="p-6 border-t border-white/10 bg-black/40 backdrop-blur-md h-[80px] flex items-center">
           <div className="flex items-center justify-between gap-4 w-full">
             <button onClick={handlePrev} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowLeft size={20}/></button>
-            <button
-              onClick={() => {
-                if (!audioEnabled) {
-                  setAudioEnabled(true);
-                  setIsAutoPlaying(true);
-                } else {
-                  setIsAutoPlaying(!isAutoPlaying);
-                }
-              }}
-              className={`flex-grow flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-bold py-3 rounded-full transition-colors border ${
-                !audioEnabled
-                  ? 'bg-green-500/20 hover:bg-green-500/30 border-green-500/40 animate-pulse'
-                  : 'hover:bg-white/10 border-white/10'
-              }`}
-            >
-              {!audioEnabled ? <Play size={14}/> : isAutoPlaying ? <Pause size={14}/> : <Play size={14}/>}
-              {!audioEnabled ? 'START EXPERIENCE' : isAutoPlaying ? 'PAUSE' : 'START EXPERIENCE'}
-            </button>
+            {!audioEnabled && (
+              <button
+                onClick={() => setAudioEnabled(true)}
+                className="flex-grow flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-bold py-3 rounded-full transition-colors border bg-green-500/20 hover:bg-green-500/30 border-green-500/40 animate-pulse"
+              >
+                <Play size={14}/>
+                START EXPERIENCE
+              </button>
+            )}
+            {audioEnabled && (
+              <div className="flex-grow"></div>
+            )}
             <button onClick={handleNext} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
             <button
               onClick={() => setIsMuted(!isMuted)}

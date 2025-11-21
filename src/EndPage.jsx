@@ -28,7 +28,7 @@ const EndPage = ({ onRestart }) => {
   };
 
   const handleJoin = () => {
-    window.open('https://thefutureconcern.com', '_blank');
+    window.open('https://thefutureconcern.io', '_blank');
   };
 
   return (
