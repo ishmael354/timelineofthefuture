@@ -252,24 +252,52 @@ const FutureTimeline = () => {
           console.log(`No voiceover for era ${activeEra}`);
         });
 
-        // Ambient sound (looping)
-        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3`);
-        ambient.loop = true;
-        ambient.volume = 0; // Start at 0 for fade-in
-        ambientRef.current = ambient;
+        // Ambient sound (looping) - try both .mp3 and .wav
+        const tryAmbient = async () => {
+          let ambient;
+          try {
+            // Try MP3 first
+            ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3`);
+          } catch {
+            // Try WAV if MP3 doesn't exist
+            ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.wav`);
+          }
 
-        ambient.play().then(() => {
-          // Fade in
-          const fadeIn = setInterval(() => {
-            if (ambientRef.current && ambientRef.current.volume < 0.3) {
-              ambientRef.current.volume = Math.min(0.3, ambientRef.current.volume + 0.05);
-            } else {
-              clearInterval(fadeIn);
-            }
-          }, 50);
-        }).catch(() => {
-          console.log(`No ambient sound for era ${activeEra}`);
-        });
+          ambient.loop = true;
+          ambient.volume = 0; // Start at 0 for fade-in
+          ambientRef.current = ambient;
+
+          ambient.play().then(() => {
+            // Fade in
+            const fadeIn = setInterval(() => {
+              if (ambientRef.current && ambientRef.current.volume < 0.3) {
+                ambientRef.current.volume = Math.min(0.3, ambientRef.current.volume + 0.05);
+              } else {
+                clearInterval(fadeIn);
+              }
+            }, 50);
+          }).catch((e) => {
+            // Try WAV if MP3 failed
+            const ambientWav = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.wav`);
+            ambientWav.loop = true;
+            ambientWav.volume = 0;
+            ambientRef.current = ambientWav;
+
+            ambientWav.play().then(() => {
+              const fadeIn = setInterval(() => {
+                if (ambientRef.current && ambientRef.current.volume < 0.3) {
+                  ambientRef.current.volume = Math.min(0.3, ambientRef.current.volume + 0.05);
+                } else {
+                  clearInterval(fadeIn);
+                }
+              }, 50);
+            }).catch(() => {
+              console.log(`No ambient sound for era ${activeEra}`);
+            });
+          });
+        };
+
+        tryAmbient();
 
       } catch (error) {
         console.log('Audio playback error:', error);
