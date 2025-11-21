@@ -215,14 +215,14 @@ const FutureTimeline = () => {
       id: i,
       left: Math.random() * 100,
       top: Math.random() * 100,
-      delay: Math.random() * 5,
-      duration: Math.random() * 5 + 5
+      delay: Math.random() * 3,
+      duration: Math.random() * 3 + 3 // Faster animations
     }));
     return {
-      cosmos: generate(50),
-      ocean: generate(20),
-      migration: generate(40),
-      sim: generate(30)
+      cosmos: generate(80), // More particles
+      ocean: generate(40),
+      migration: generate(60),
+      sim: generate(50)
     };
   }, []);
 
@@ -289,36 +289,36 @@ const FutureTimeline = () => {
         </div>
 
         <div className="relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 max-w-4xl">
+          <div className="transition-all duration-700 ease-out">
+            {/* Engine Tag */}
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-6 transition-all duration-500`}>
+              <span className={`${eras[activeEra].color} transition-colors duration-500`}>{eras[activeEra].engineIcon}</span>
+              <span className={`text-xs font-mono uppercase tracking-wider ${eras[activeEra].color} transition-colors duration-500`}>
+                {eras[activeEra].engine}
+              </span>
+            </div>
 
-          {/* Engine Tag */}
-          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-6 animate-fadeIn`}>
-            <span className={`${eras[activeEra].color}`}>{eras[activeEra].engineIcon}</span>
-            <span className={`text-xs font-mono uppercase tracking-wider ${eras[activeEra].color}`}>
-              {eras[activeEra].engine}
-            </span>
+            {/* Title */}
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight transition-all duration-500 min-h-[120px] md:min-h-[180px] flex items-center">
+              {eras[activeEra].title}
+            </h2>
+
+            {/* Epoch Badge */}
+            <div className="mb-8 opacity-50 font-mono text-sm border-l border-white/30 pl-3 transition-all duration-500">
+              {eras[activeEra].epoch}
+            </div>
+
+            {/* Narrative */}
+            <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed mb-12 max-w-2xl transition-all duration-500 min-h-[160px]">
+              {eras[activeEra].narrative}
+            </p>
+
+            {/* The "Insight" Box */}
+            <div className={`border-l-4 ${eras[activeEra].color.replace('text', 'border')} pl-6 py-2 transition-all duration-500`}>
+              <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">The Paradigm Shift</p>
+              <p className="text-xl md:text-2xl text-white font-medium transition-all duration-500">{eras[activeEra].insight}</p>
+            </div>
           </div>
-
-          {/* Title */}
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
-            {eras[activeEra].title}
-          </h2>
-
-          {/* Epoch Badge */}
-          <div className="mb-8 opacity-50 font-mono text-sm border-l border-white/30 pl-3">
-            {eras[activeEra].epoch}
-          </div>
-
-          {/* Narrative */}
-          <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed mb-12 max-w-2xl">
-            {eras[activeEra].narrative}
-          </p>
-
-          {/* The "Insight" Box */}
-          <div className={`border-l-4 ${eras[activeEra].color.replace('text', 'border')} pl-6 py-2`}>
-            <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">The Paradigm Shift</p>
-            <p className="text-xl md:text-2xl text-white font-medium">{eras[activeEra].insight}</p>
-          </div>
-
         </div>
       </div>
     </div>
@@ -330,24 +330,25 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
   const borderColor = color.replace('text-', 'border-');
 
   return (
-    <div className="w-full h-full relative opacity-20 animate-fadeIn">
+    <div className="w-full h-full relative opacity-60 animate-fadeIn transition-opacity duration-1000">
 
       {/* 0. Void */}
       {activeEra === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
-           <div className="w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+           <div className="w-96 h-96 bg-white/20 rounded-full blur-3xl animate-pulseSlow"></div>
            {particles.cosmos.map((p) => (
              <div
                key={`cosmos-${p.id}`}
-               className="absolute w-1 h-1 bg-white/30 rounded-full animate-float"
+               className="absolute w-2 h-2 bg-white/70 rounded-full animate-float shadow-lg"
                style={{
                  left: `${p.left}%`,
                  top: `${p.top}%`,
-                 animationDelay: `${p.delay}s`
+                 animationDelay: `${p.delay}s`,
+                 boxShadow: '0 0 8px rgba(255,255,255,0.5)'
                }}
              />
            ))}
-           <div className="absolute font-mono text-[20rem] opacity-5 font-bold select-none">0</div>
+           <div className="absolute font-mono text-[20rem] opacity-20 font-bold select-none">0</div>
         </div>
       )}
 
@@ -355,29 +356,30 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
       {activeEra === 1 && (
         <div className="absolute inset-0">
            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className={`w-[500px] h-[500px] rounded-full border border-dashed ${borderColor} opacity-20 animate-spin-slow`}></div>
+              <div className={`w-[500px] h-[500px] rounded-full border-2 border-dashed ${borderColor} opacity-50 animate-spin-slow`}></div>
            </div>
-           <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 ${shapeColor} blur-2xl animate-pulse`}></div>
-           <div className="absolute bottom-10 right-10 text-9xl opacity-10 font-serif">SUN</div>
+           <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 ${shapeColor} blur-3xl animate-pulse`}></div>
+           <div className="absolute bottom-10 right-10 text-9xl opacity-30 font-serif">SUN</div>
         </div>
       )}
 
       {/* 2. Tidal / Lunar */}
       {activeEra === 2 && (
         <div className="absolute inset-0 overflow-hidden">
-           <div className={`absolute bottom-0 w-full h-1/2 ${shapeColor} opacity-20 blur-3xl animate-pulseSlow`}></div>
-           <div className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full border-2 border-white/20 overflow-hidden">
-              <div className="w-full h-full bg-white/10 rounded-full absolute -left-1/2 animate-pulse"></div>
+           <div className={`absolute bottom-0 w-full h-1/2 ${shapeColor} opacity-40 blur-3xl animate-pulseSlow`}></div>
+           <div className="absolute top-1/4 right-1/4 w-40 h-40 rounded-full border-4 border-white/40 overflow-hidden">
+              <div className="w-full h-full bg-white/30 rounded-full absolute -left-1/2 animate-pulse"></div>
            </div>
-           <div className="absolute bottom-20 right-20 text-8xl opacity-10 font-serif tracking-widest">TIDE</div>
+           <div className="absolute bottom-20 right-20 text-8xl opacity-30 font-serif tracking-widest">TIDE</div>
            {particles.ocean.map((p) => (
              <div
                key={`ocean-${p.id}`}
-               className={`absolute w-1 h-1 ${shapeColor} rounded-full animate-float`}
+               className={`absolute w-3 h-3 ${shapeColor} rounded-full animate-float opacity-80`}
                style={{
                  left: `${p.left}%`,
                  top: `${p.top}%`,
-                 animationDelay: `${p.delay}s`
+                 animationDelay: `${p.delay}s`,
+                 boxShadow: `0 0 10px currentColor`
                }}
              />
            ))}
@@ -387,10 +389,10 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
       {/* 3. Biological / Predator */}
       {activeEra === 3 && (
         <div className="absolute inset-0">
-           <div className={`absolute w-4 h-4 ${shapeColor} top-1/3 left-1/4 rounded-full animate-ping`}></div>
-           <div className={`absolute w-2 h-2 ${shapeColor} top-2/3 left-3/4 rounded-full animate-ping`} style={{animationDelay: '0.5s'}}></div>
+           <div className={`absolute w-8 h-8 ${shapeColor} top-1/3 left-1/4 rounded-full animate-ping`}></div>
+           <div className={`absolute w-6 h-6 ${shapeColor} top-2/3 left-3/4 rounded-full animate-ping`} style={{animationDelay: '0.5s'}}></div>
            <svg className="absolute inset-0 w-full h-full">
-              <line x1="25%" y1="33%" x2="75%" y2="66%" stroke="currentColor" strokeWidth="1" strokeDasharray="5,5" className={`opacity-20 animate-dash ${color.replace('text-', 'text-')}`} />
+              <line x1="25%" y1="33%" x2="75%" y2="66%" stroke="currentColor" strokeWidth="3" strokeDasharray="5,5" className={`opacity-60 animate-dash ${color.replace('text-', 'text-')}`} />
            </svg>
         </div>
       )}
@@ -401,12 +403,13 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
            {particles.migration.map((p) => (
              <div
                key={`migration-${p.id}`}
-               className={`absolute w-1 h-1 ${shapeColor} rounded-full animate-migration opacity-60`}
+               className={`absolute w-3 h-3 ${shapeColor} rounded-full animate-migration opacity-90 shadow-lg`}
                style={{
                  left: '-20px',
                  top: `${p.top}%`,
-                 animationDelay: `${p.id * 0.2}s`,
-                 animationDuration: `${p.duration}s`
+                 animationDelay: `${p.id * 0.15}s`,
+                 animationDuration: `${p.duration}s`,
+                 boxShadow: '0 0 12px currentColor'
                }}
              />
            ))}
@@ -415,12 +418,12 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
                d="M-100,500 C200,400 400,600 800,300 S1200,400 1500,200"
                fill="none"
                stroke="currentColor"
-               strokeWidth="2"
-               className={`opacity-20 ${color.replace('text-', 'text-')}`}
+               strokeWidth="4"
+               className={`opacity-50 ${color.replace('text-', 'text-')}`}
                strokeDasharray="10,10"
              />
            </svg>
-           <div className="absolute top-20 left-20 text-8xl opacity-10 font-serif tracking-widest">PATH</div>
+           <div className="absolute top-20 left-20 text-8xl opacity-30 font-serif tracking-widest">PATH</div>
         </div>
       )}
 
@@ -563,17 +566,18 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
            {particles.sim.map((p) => (
              <div
                key={`sim-${p.id}`}
-               className={`absolute w-1 h-1 bg-white/30 rounded-full animate-float`}
+               className={`absolute w-2 h-2 bg-white/70 rounded-full animate-float shadow-lg`}
                style={{
                  left: `${p.left}%`,
                  top: `${p.top}%`,
-                 animationDelay: `${p.delay}s`
+                 animationDelay: `${p.delay}s`,
+                 boxShadow: '0 0 8px rgba(255,255,255,0.6)'
                }}
              />
            ))}
-           <div className="absolute inset-0 bg-[linear-gradient(0deg,transparent_0%,rgba(255,255,255,0.05)_50%,transparent_100%)] bg-[length:100%_4px] animate-scan"></div>
+           <div className="absolute inset-0 bg-[linear-gradient(0deg,transparent_0%,rgba(255,255,255,0.15)_50%,transparent_100%)] bg-[length:100%_4px] animate-scan"></div>
            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="w-[600px] h-[600px] border-[200px] border-white/5 rounded-full animate-pulseSlow"></div>
+              <div className="w-[600px] h-[600px] border-[200px] border-white/20 rounded-full animate-pulseSlow"></div>
            </div>
         </div>
       )}

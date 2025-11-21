@@ -7,16 +7,16 @@ export default {
   theme: {
     extend: {
       animation: {
-        'spin-slow': 'spin-slow 12s linear infinite',
-        'spin-reverse-slow': 'spin-reverse-slow 12s linear infinite',
-        'pulseSlow': 'pulse-slow 4s ease-in-out infinite',
-        'dash': 'dash 2s linear infinite',
-        'float': 'float 6s ease-in-out infinite',
-        'migration': 'migration 12s linear infinite',
-        'grow': 'grow 2s ease-out forwards',
-        'slideUp': 'slideUp 0.5s ease-out forwards',
-        'scan': 'scan 4s linear infinite',
-        'fadeIn': 'fadeIn 0.5s ease-out forwards',
+        'spin-slow': 'spin-slow 8s linear infinite',
+        'spin-reverse-slow': 'spin-reverse-slow 8s linear infinite',
+        'pulseSlow': 'pulse-slow 2s ease-in-out infinite',
+        'dash': 'dash 1.5s linear infinite',
+        'float': 'float 4s ease-in-out infinite',
+        'migration': 'migration 8s linear infinite',
+        'grow': 'grow 1.5s ease-out forwards',
+        'slideUp': 'slideUp 0.4s ease-out forwards',
+        'scan': 'scan 3s linear infinite',
+        'fadeIn': 'fadeIn 0.6s ease-out forwards',
       },
       keyframes: {
         'spin-slow': {
@@ -29,14 +29,14 @@ export default {
         },
         'pulse-slow': {
           '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.5' },
+          '50%': { opacity: '0.3' },
         },
         'dash': {
           'to': { strokeDashoffset: '0' },
         },
         'float': {
           '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-20px)' },
+          '50%': { transform: 'translateY(-40px)' },
         },
         'migration': {
           '0%': { transform: 'translateX(-20vw) translateY(0)', opacity: '0' },
