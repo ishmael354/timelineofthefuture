@@ -42,16 +42,16 @@ const IntroPage = ({ onStart }) => {
       </div>
 
       {/* --- CONTENT CONTAINER --- */}
-      <div className="relative z-20 max-w-4xl px-6 text-center space-y-8">
+      <div className="relative z-20 max-w-4xl px-6 text-center space-y-4 md:space-y-8 py-8">
 
         {/* Header Section */}
-        <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0s' }}>
+        <div className="space-y-4 md:space-y-6 animate-fade-in" style={{ animationDelay: '0s' }}>
           {/* Banner Image */}
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-4 md:mb-6">
             <img
               src="/timelineofthefuture/video/banner.png"
               alt="The History of the Future"
-              className="max-w-2xl w-full h-auto"
+              className="max-w-full md:max-w-2xl w-full h-auto px-4"
             />
           </div>
 
@@ -67,17 +67,17 @@ const IntroPage = ({ onStart }) => {
         </div>
 
         {/* The Divider / Insight */}
-        <div className="w-px h-12 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.3s' }}></div>
+        <div className="w-px h-8 md:h-12 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.3s' }}></div>
 
         <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <p className="text-xl md:text-2xl font-serif italic text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            "We talk about the future like it's a place we are going to. <br/>
+          <p className="text-lg md:text-xl lg:text-2xl font-serif italic text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
+            "We talk about the future like it's a place we are going to. <br className="hidden md:block"/>
             But the future is not a destination. It is a tool we built."
           </p>
         </div>
 
         {/* --- BRANDING --- */}
-        <div className="flex flex-col items-center gap-3 pt-6 animate-fade-in" style={{ animationDelay: '0.7s' }}>
+        <div className="flex flex-col items-center gap-2 md:gap-3 pt-4 md:pt-6 animate-fade-in" style={{ animationDelay: '0.7s' }}>
           <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-500/50">
             Presented By
           </p>
@@ -92,7 +92,7 @@ const IntroPage = ({ onStart }) => {
             onMouseLeave={() => setIsHovering(false)}
           >
             {/* Animated Headphones Video */}
-            <div className="w-20 h-20 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-900/10 overflow-hidden group-hover:border-emerald-500/60 transition-all duration-700">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-900/10 overflow-hidden group-hover:border-emerald-500/60 transition-all duration-700">
               <video
                 autoPlay
                 loop
@@ -110,13 +110,13 @@ const IntroPage = ({ onStart }) => {
         </div>
 
         {/* CTA Button */}
-        <div className="pt-6 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+        <div className="pt-4 md:pt-6 animate-fade-in" style={{ animationDelay: '0.9s' }}>
           <button
             onClick={onStart}
-            className="group relative px-8 py-4 bg-white text-black font-bold tracking-widest uppercase text-sm hover:bg-gray-200 transition-all duration-300 flex items-center gap-3 mx-auto"
+            className="group relative px-8 py-4 bg-white text-black font-bold tracking-widest uppercase text-sm hover:bg-gray-200 transition-all duration-300 flex items-center gap-3 mx-auto shadow-2xl"
           >
             Enter the Timeline
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
 
             {/* Button Glow Effect */}
             <div className="absolute inset-0 bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
