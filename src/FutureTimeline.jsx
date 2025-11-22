@@ -9,7 +9,7 @@ import IntroPage from './IntroPage';
 import EndPage from './EndPage';
 
 // Cache-busting version for audio files - update this to force refresh
-const AUDIO_VERSION = '20251121-v6';
+const AUDIO_VERSION = '20251121-v7';
 
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -316,7 +316,6 @@ const FutureTimeline = () => {
   useEffect(() => {
     if (!audioEnabled) return;
 
-    let musicFadeOutInterval = null;
     let musicFadeInInterval = null;
     let isCancelled = false;
 
@@ -339,32 +338,25 @@ const FutureTimeline = () => {
       const needsSwitch = currentMusicTrackRef.current !== musicTrack;
 
       if (!backgroundMusicRef.current || needsSwitch) {
-        // Stop and clean up old music if it exists
+        // Stop and clean up old music if it exists - do this SYNCHRONOUSLY
         if (backgroundMusicRef.current && needsSwitch) {
           const oldMusic = backgroundMusicRef.current;
           console.log(`Stopping old music track: ${currentMusicTrackRef.current}`);
 
-          // Fade out quickly
-          musicFadeOutInterval = setInterval(() => {
-            if (oldMusic.volume > 0.02) {
-              oldMusic.volume = Math.max(0, oldMusic.volume - 0.05);
-            } else {
-              clearInterval(musicFadeOutInterval);
-              oldMusic.pause();
-              oldMusic.currentTime = 0;
-              // Completely remove the old audio element
-              oldMusic.src = '';
-              oldMusic.load();
-            }
-          }, 50);
+          // IMMEDIATELY stop the old music
+          oldMusic.volume = 0;
+          oldMusic.pause();
+          oldMusic.currentTime = 0;
+          oldMusic.src = '';
+          oldMusic.load();
 
-          // Wait for fade out to complete
-          await new Promise(resolve => setTimeout(resolve, 500));
-          if (isCancelled) return;
-
-          // Clear the reference
+          // Clear references immediately
           backgroundMusicRef.current = null;
           currentMusicTrackRef.current = null;
+
+          // Short wait to let browser clean up
+          await new Promise(resolve => setTimeout(resolve, 100));
+          if (isCancelled) return;
         }
 
         // Start new music
@@ -372,6 +364,8 @@ const FutureTimeline = () => {
         const music = new Audio(musicPath);
         music.loop = true;
         music.volume = 0; // Start at 0 for fade-in
+
+        // Set references BEFORE playing
         backgroundMusicRef.current = music;
         currentMusicTrackRef.current = musicTrack;
         console.log(`Starting new music track: ${musicTrack}`);
@@ -402,28 +396,27 @@ const FutureTimeline = () => {
 
     startOrSwitchBackgroundMusic();
 
-    // Cleanup function
+    // Cleanup function - stop music if effect re-runs
     return () => {
       isCancelled = true;
-      if (musicFadeOutInterval) clearInterval(musicFadeOutInterval);
       if (musicFadeInInterval) clearInterval(musicFadeInInterval);
+      // Don't stop music here - let the next effect handle the transition
     };
   }, [audioEnabled, activeEra, isMuted]);
 
-  // Mute/unmute effect
+  // Mute/unmute effect - handles muting all audio
   useEffect(() => {
-    if (backgroundMusicRef.current) {
-      backgroundMusicRef.current.volume = isMuted ? 0 : 0.05;
+    // Only mute/unmute existing audio - don't interfere with transitions
+    if (isMuted) {
+      if (backgroundMusicRef.current) backgroundMusicRef.current.volume = 0;
+      if (voiceoverRef.current) voiceoverRef.current.volume = 0;
+      if (ambientRef.current) ambientRef.current.volume = 0;
+    } else {
+      if (backgroundMusicRef.current) backgroundMusicRef.current.volume = 0.05;
+      if (voiceoverRef.current) voiceoverRef.current.volume = 0.8;
+      // Ambient volume is handled by main audio effect based on era
     }
-    if (voiceoverRef.current) {
-      voiceoverRef.current.volume = isMuted ? 0 : 0.8;
-    }
-    if (ambientRef.current) {
-      // Eras 3 and 4 have louder ambient (0.3 vs 0.15)
-      const targetVolume = (activeEra === 3 || activeEra === 4) ? 0.3 : 0.15;
-      ambientRef.current.volume = isMuted ? 0 : targetVolume;
-    }
-  }, [isMuted, activeEra]);
+  }, [isMuted]);
 
   // Memoized particle positions to prevent flickering on re-renders
   const particleMap = useMemo(() => {
