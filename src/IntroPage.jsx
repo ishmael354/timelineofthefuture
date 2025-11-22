@@ -50,7 +50,7 @@ const IntroPage = ({ onStart }) => {
             Interactive Timeline
           </div>
           <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-none bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">
-            The Architecture <br /> of Time
+            The History <br /> of the Future
           </h1>
           <p className="text-lg md:text-xl text-gray-400 font-light tracking-wide max-w-2xl mx-auto">
             How biology, culture, and algorithms invented "The Future."

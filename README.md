@@ -1,4 +1,4 @@
-# Timeline of the Future
+# The History of the Future
 
 An interactive timeline exploring how the concept of "future" evolved from the first life forms to the algorithmic age.
 

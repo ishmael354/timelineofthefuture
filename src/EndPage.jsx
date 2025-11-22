@@ -24,7 +24,7 @@ const EndPage = ({ onRestart }) => {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'The Architecture of Time',
+        title: 'The History of the Future',
         text: 'Explore how humans invented "The Future" - an interactive timeline from The Future Concern',
         url: window.location.href
       }).catch(err => console.log('Share failed:', err));
