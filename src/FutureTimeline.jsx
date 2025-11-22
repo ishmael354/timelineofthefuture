@@ -9,7 +9,7 @@ import IntroPage from './IntroPage';
 import EndPage from './EndPage';
 
 // Cache-busting version for audio files - update this to force refresh
-const AUDIO_VERSION = '20251121-v3';
+const AUDIO_VERSION = '20251121-v4';
 
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -253,16 +253,23 @@ const FutureTimeline = () => {
         const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3?v=${AUDIO_VERSION}`);
         ambient.loop = true;
         ambient.volume = 0; // Start at 0 for fade-in
+
+        // Era 3 (Biological Engine) starts at 10 seconds in and is louder
+        if (activeEra === 3) {
+          ambient.currentTime = 10;
+        }
+
         ambientRef.current = ambient;
 
         await ambient.play();
         if (isCancelled) return;
         console.log(`Playing ambient sound for era ${activeEra}`);
 
-        // Fade in ambient
+        // Fade in ambient - era 3 is louder (0.3 vs 0.15)
+        const targetVolume = activeEra === 3 ? 0.3 : 0.15;
         fadeInInterval = setInterval(() => {
-          if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : 0.15)) {
-            ambientRef.current.volume = Math.min(isMuted ? 0 : 0.15, ambientRef.current.volume + 0.03);
+          if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : targetVolume)) {
+            ambientRef.current.volume = Math.min(isMuted ? 0 : targetVolume, ambientRef.current.volume + 0.03);
           } else {
             clearInterval(fadeInInterval);
           }
@@ -301,7 +308,7 @@ const FutureTimeline = () => {
     };
   }, [activeEra, isMuted, audioEnabled]);
 
-  // Background music effect - starts when audio is enabled, switches at eras 7, 10, and 14
+  // Background music effect - starts when audio is enabled, switches at eras 5, 10, and 14
   useEffect(() => {
     if (!audioEnabled) return;
 
@@ -311,8 +318,8 @@ const FutureTimeline = () => {
 
     const startOrSwitchBackgroundMusic = async () => {
       // Determine which music track to use based on era
-      // background: eras 0-6 (start through Agrarian)
-      // background-1: eras 7-9 (Writing through Mythic)
+      // background: eras 0-4 (start through Ecological)
+      // background-1: eras 5-9 (Semantic through Mythic)
       // background-2: eras 10-13 (Risk through Synchronization)
       // background-3: eras 14-16 (Strategic/Game Theory through end)
       let musicTrack = 'background';
@@ -320,7 +327,7 @@ const FutureTimeline = () => {
         musicTrack = 'background-3';
       } else if (activeEra >= 10) {
         musicTrack = 'background-2';
-      } else if (activeEra >= 7) {
+      } else if (activeEra >= 5) {
         musicTrack = 'background-1';
       }
 
@@ -408,9 +415,11 @@ const FutureTimeline = () => {
       voiceoverRef.current.volume = isMuted ? 0 : 0.8;
     }
     if (ambientRef.current) {
-      ambientRef.current.volume = isMuted ? 0 : 0.15;
+      // Era 3 has louder ambient (0.3 vs 0.15)
+      const targetVolume = activeEra === 3 ? 0.3 : 0.15;
+      ambientRef.current.volume = isMuted ? 0 : targetVolume;
     }
-  }, [isMuted]);
+  }, [isMuted, activeEra]);
 
   // Memoized particle positions to prevent flickering on re-renders
   const particleMap = useMemo(() => {
