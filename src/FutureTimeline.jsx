@@ -8,6 +8,9 @@ import {
 import IntroPage from './IntroPage';
 import EndPage from './EndPage';
 
+// Cache-busting version for audio files - update this to force refresh
+const AUDIO_VERSION = '20251121-v2';
+
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [showEnd, setShowEnd] = useState(false);
@@ -247,7 +250,7 @@ const FutureTimeline = () => {
 
       try {
         // Step 1: Start ambient sound first
-        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3`);
+        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3?v=${AUDIO_VERSION}`);
         ambient.loop = true;
         ambient.volume = 0; // Start at 0 for fade-in
         ambientRef.current = ambient;
@@ -269,7 +272,7 @@ const FutureTimeline = () => {
         await new Promise(resolve => setTimeout(resolve, 2000));
         if (isCancelled) return;
 
-        const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${activeEra}.mp3`);
+        const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${activeEra}.mp3?v=${AUDIO_VERSION}`);
         voiceover.volume = isMuted ? 0 : 0.8;
         voiceoverRef.current = voiceover;
 
@@ -354,7 +357,7 @@ const FutureTimeline = () => {
         }
 
         // Start new music
-        const musicPath = `/timelineofthefuture/audio/music/${musicTrack}.mp3`;
+        const musicPath = `/timelineofthefuture/audio/music/${musicTrack}.mp3?v=${AUDIO_VERSION}`;
         const music = new Audio(musicPath);
         music.loop = true;
         music.volume = 0; // Start at 0 for fade-in

@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { RotateCcw, Share2, ArrowRight } from 'lucide-react';
 
+// Cache-busting version for video - update to force refresh
+const VIDEO_VERSION = '20251121-v2';
+
 const EndPage = ({ onRestart }) => {
   const videoRef = useRef(null);
   const [videoEnded, setVideoEnded] = useState(false);
@@ -46,7 +49,7 @@ const EndPage = ({ onRestart }) => {
       <div className="absolute inset-0 flex items-center justify-center opacity-20">
         <video
           ref={videoRef}
-          src="/timelineofthefuture/video/logo.mp4"
+          src={`/timelineofthefuture/video/logo.mp4?v=${VIDEO_VERSION}`}
           muted={false}
           playsInline
           onEnded={handleVideoEnded}
