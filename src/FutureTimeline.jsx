@@ -9,7 +9,7 @@ import IntroPage from './IntroPage';
 import EndPage from './EndPage';
 
 // Cache-busting version for audio files - update this to force refresh
-const AUDIO_VERSION = '20251121-v4';
+const AUDIO_VERSION = '20251121-v5';
 
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -258,6 +258,10 @@ const FutureTimeline = () => {
         if (activeEra === 3) {
           ambient.currentTime = 10;
         }
+        // Era 4 (Ecological Engine) starts at 15 seconds in and is louder
+        if (activeEra === 4) {
+          ambient.currentTime = 15;
+        }
 
         ambientRef.current = ambient;
 
@@ -265,8 +269,8 @@ const FutureTimeline = () => {
         if (isCancelled) return;
         console.log(`Playing ambient sound for era ${activeEra}`);
 
-        // Fade in ambient - era 3 is louder (0.3 vs 0.15)
-        const targetVolume = activeEra === 3 ? 0.3 : 0.15;
+        // Fade in ambient - eras 3 and 4 are louder (0.3 vs 0.15)
+        const targetVolume = (activeEra === 3 || activeEra === 4) ? 0.3 : 0.15;
         fadeInInterval = setInterval(() => {
           if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : targetVolume)) {
             ambientRef.current.volume = Math.min(isMuted ? 0 : targetVolume, ambientRef.current.volume + 0.03);
@@ -415,8 +419,8 @@ const FutureTimeline = () => {
       voiceoverRef.current.volume = isMuted ? 0 : 0.8;
     }
     if (ambientRef.current) {
-      // Era 3 has louder ambient (0.3 vs 0.15)
-      const targetVolume = activeEra === 3 ? 0.3 : 0.15;
+      // Eras 3 and 4 have louder ambient (0.3 vs 0.15)
+      const targetVolume = (activeEra === 3 || activeEra === 4) ? 0.3 : 0.15;
       ambientRef.current.volume = isMuted ? 0 : targetVolume;
     }
   }, [isMuted, activeEra]);
@@ -486,7 +490,7 @@ const FutureTimeline = () => {
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-white/20 flex flex-col md:flex-row overflow-hidden relative">
       {/* Left Rail: Navigation & Context */}
-      <div className={`w-full md:w-1/3 border-r border-white/10 flex flex-col justify-between transition-colors duration-700 ${eras[activeEra].bg} bg-opacity-20`}>
+      <div className={`w-full md:w-1/3 border-r border-white/10 flex flex-col justify-between transition-colors duration-700 order-2 md:order-1 ${eras[activeEra].bg} bg-opacity-20`}>
         <div className="p-6 h-[calc(100vh-80px)] overflow-y-auto custom-scrollbar">
           <h1 className="text-xs font-bold tracking-[0.2em] uppercase text-white/40 mb-8 flex items-center gap-2 sticky top-0 bg-black/0 backdrop-blur-sm py-4 z-20">
             <Activity size={14} /> The Architecture of Time
@@ -549,7 +553,7 @@ const FutureTimeline = () => {
       </div>
 
       {/* Main Content: The Narrative */}
-      <div className="w-full md:w-2/3 relative flex flex-col">
+      <div className="w-full md:w-2/3 relative flex flex-col order-1 md:order-2">
 
         {/* Abstract Background */}
         <div className="absolute inset-0 overflow-hidden">
