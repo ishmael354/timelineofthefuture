@@ -9,7 +9,7 @@ import IntroPage from './IntroPage';
 import EndPage from './EndPage';
 
 // Cache-busting version for audio files - update this to force refresh
-const AUDIO_VERSION = '20251121-v8';
+const AUDIO_VERSION = '20251121-v9';
 
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -217,7 +217,7 @@ const FutureTimeline = () => {
 
   // Audio playback effect with proper sequencing
   useEffect(() => {
-    if (!audioEnabled) return; // Don't play audio until user enables it
+    if (!audioEnabled || showEnd) return; // Don't play audio until user enables it or if on end page
 
     let fadeOutInterval = null;
     let fadeInInterval = null;
@@ -269,8 +269,13 @@ const FutureTimeline = () => {
         if (isCancelled) return;
         console.log(`Playing ambient sound for era ${activeEra}`);
 
-        // Fade in ambient - eras 3 and 4 are louder (0.3 vs 0.15)
-        const targetVolume = (activeEra === 3 || activeEra === 4) ? 0.3 : 0.15;
+        // Fade in ambient - eras 3 and 4 are louder (0.3), era 5 is quieter (0.105), others 0.15
+        let targetVolume = 0.15;
+        if (activeEra === 3 || activeEra === 4) {
+          targetVolume = 0.3;
+        } else if (activeEra === 5) {
+          targetVolume = 0.105;
+        }
         fadeInInterval = setInterval(() => {
           if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : targetVolume)) {
             ambientRef.current.volume = Math.min(isMuted ? 0 : targetVolume, ambientRef.current.volume + 0.03);
@@ -305,12 +310,13 @@ const FutureTimeline = () => {
       if (fadeInInterval) clearInterval(fadeInInterval);
       if (voiceoverRef.current) {
         voiceoverRef.current.pause();
+        voiceoverRef.current.currentTime = 0;
       }
       if (ambientRef.current) {
         ambientRef.current.pause();
       }
     };
-  }, [activeEra, isMuted, audioEnabled]);
+  }, [activeEra, isMuted, audioEnabled, showEnd]);
 
   // Background music effect - starts when audio is enabled, switches at eras 5, 10, and 14
   useEffect(() => {
@@ -365,6 +371,10 @@ const FutureTimeline = () => {
         music.loop = true;
         music.volume = 0; // Start at 0 for fade-in
 
+        // Different volumes for different tracks
+        // background-1 is 20% quieter than others
+        const targetVolume = musicTrack === 'background-1' ? 0.04 : 0.05;
+
         // Set references BEFORE playing
         backgroundMusicRef.current = music;
         currentMusicTrackRef.current = musicTrack;
@@ -375,8 +385,8 @@ const FutureTimeline = () => {
           console.log(`Background music (${musicTrack}.mp3) started successfully`);
           // Fade in
           musicFadeInInterval = setInterval(() => {
-            if (backgroundMusicRef.current && backgroundMusicRef.current.volume < (isMuted ? 0 : 0.05)) {
-              backgroundMusicRef.current.volume = Math.min(isMuted ? 0 : 0.05, backgroundMusicRef.current.volume + 0.005);
+            if (backgroundMusicRef.current && backgroundMusicRef.current.volume < (isMuted ? 0 : targetVolume)) {
+              backgroundMusicRef.current.volume = Math.min(isMuted ? 0 : targetVolume, backgroundMusicRef.current.volume + 0.005);
             } else {
               clearInterval(musicFadeInInterval);
             }
@@ -412,7 +422,11 @@ const FutureTimeline = () => {
       if (voiceoverRef.current) voiceoverRef.current.volume = 0;
       if (ambientRef.current) ambientRef.current.volume = 0;
     } else {
-      if (backgroundMusicRef.current) backgroundMusicRef.current.volume = 0.05;
+      if (backgroundMusicRef.current) {
+        // background-1 is 20% quieter
+        const musicVolume = currentMusicTrackRef.current === 'background-1' ? 0.04 : 0.05;
+        backgroundMusicRef.current.volume = musicVolume;
+      }
       if (voiceoverRef.current) voiceoverRef.current.volume = 0.92;
       // Ambient volume is handled by main audio effect based on era
     }
