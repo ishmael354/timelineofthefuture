@@ -46,6 +46,15 @@ const IntroPage = ({ onStart }) => {
 
         {/* Header Section */}
         <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0s' }}>
+          {/* Banner Image */}
+          <div className="flex justify-center mb-6">
+            <img
+              src="/timelineofthefuture/video/banner.png"
+              alt="The History of the Future"
+              className="max-w-2xl w-full h-auto"
+            />
+          </div>
+
           <div className="inline-block px-3 py-1 border border-white/20 rounded-full text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">
             Interactive Timeline
           </div>
@@ -85,9 +94,13 @@ const IntroPage = ({ onStart }) => {
 
       {/* --- FOOTER: BRANDING --- */}
       {/* Sleek integration of The Future Concern Logo */}
-      <div className="absolute bottom-10 flex flex-col items-center gap-4 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+      <div className="absolute bottom-10 flex flex-col items-center gap-3 animate-fade-in" style={{ animationDelay: '0.9s' }}>
         <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-500/50">
           Presented By
+        </p>
+
+        <p className="text-emerald-400 text-sm font-bold tracking-wide">
+          The Future Concern
         </p>
 
         <div
@@ -95,22 +108,22 @@ const IntroPage = ({ onStart }) => {
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
         >
-          {/* The Logo Image */}
-          <div className="w-20 h-20 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-900/10 overflow-hidden group-hover:border-emerald-500/60 transition-all duration-700">
-            <img
-              src="/timelineofthefuture/video/The Future Concern Logo.png"
-              alt="The Future Concern"
-              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700"
-            />
+          {/* Animated Headphones Video */}
+          <div className="w-24 h-24 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-900/10 overflow-hidden group-hover:border-emerald-500/60 transition-all duration-700">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+            >
+              <source src="/timelineofthefuture/video/headphones.mp4" type="video/mp4" />
+            </video>
           </div>
 
           {/* Subtle Glow behind the logo */}
           <div className={`absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full transition-opacity duration-700 ${isHovering ? 'opacity-50' : 'opacity-0'}`}></div>
         </div>
-
-        <p className="text-emerald-400/70 text-xs font-medium">
-          The Future Concern
-        </p>
       </div>
 
     </div>

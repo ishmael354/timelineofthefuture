@@ -9,7 +9,7 @@ import IntroPage from './IntroPage';
 import EndPage from './EndPage';
 
 // Cache-busting version for audio files - update this to force refresh
-const AUDIO_VERSION = '20251121-v10';
+const AUDIO_VERSION = '20251121-v11';
 
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -571,7 +571,7 @@ const FutureTimeline = () => {
         </div>
 
         {/* Branded Footer - Mobile only */}
-        <div className="md:hidden fixed bottom-[80px] left-0 right-0 z-50 bg-gradient-to-br from-emerald-950/90 to-black/95 border-t border-emerald-500/20 backdrop-blur-md">
+        <div className="md:hidden fixed bottom-[80px] left-0 right-0 z-40 bg-gradient-to-br from-emerald-950/90 to-black/95 border-t border-emerald-500/20 backdrop-blur-md">
           {/* Animated Wave Background */}
           <div className="absolute inset-0 opacity-20">
             <svg className="w-full h-full wave-animate" viewBox="0 0 1200 80" preserveAspectRatio="none">
@@ -602,9 +602,9 @@ const FutureTimeline = () => {
         </div>
 
         {/* Controls */}
-        <div className="p-6 border-t border-white/10 bg-black/90 backdrop-blur-md h-[80px] flex items-center fixed md:relative bottom-0 left-0 right-0 z-50 md:z-auto">
+        <div className="p-6 border-t border-white/10 bg-black/95 backdrop-blur-md h-[80px] flex items-center fixed md:relative bottom-0 left-0 right-0 z-50 md:z-auto">
           <div className="flex items-center justify-between gap-4 w-full">
-            <button onClick={handlePrev} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowLeft size={20}/></button>
+            <button onClick={handlePrev} className="p-3 rounded-full bg-white/5 border border-white/20 hover:bg-white/10 transition-colors"><ArrowLeft size={20}/></button>
             {!audioEnabled && (
               <button
                 onClick={() => setAudioEnabled(true)}
@@ -617,13 +617,13 @@ const FutureTimeline = () => {
             {audioEnabled && (
               <div className="flex-grow"></div>
             )}
-            <button onClick={handleNext} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
+            <button onClick={handleNext} className="p-3 rounded-full bg-white/5 border border-white/20 hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className={`p-3 rounded-full transition-colors ${
+              className={`p-3 rounded-full transition-colors border ${
                 isMuted
-                  ? 'bg-red-500/20 hover:bg-red-500/30'
-                  : 'hover:bg-white/10'
+                  ? 'bg-red-500/20 hover:bg-red-500/30 border-red-500/40'
+                  : 'bg-white/5 border-white/20 hover:bg-white/10'
               }`}
               aria-label={isMuted ? 'Unmute' : 'Mute'}
               title={isMuted ? 'Unmute' : 'Mute'}
@@ -657,7 +657,7 @@ const FutureTimeline = () => {
            </div>
         </div>
 
-        <div className="relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 max-w-4xl pb-24 md:pb-8">
+        <div className="relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 max-w-4xl pb-40 md:pb-8">
           <div className="transition-all duration-700 ease-out">
             {/* Engine Tag */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-6 transition-all duration-500">
