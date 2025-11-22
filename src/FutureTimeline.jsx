@@ -9,7 +9,7 @@ import IntroPage from './IntroPage';
 import EndPage from './EndPage';
 
 // Cache-busting version for audio files - update this to force refresh
-const AUDIO_VERSION = '20251121-v7';
+const AUDIO_VERSION = '20251121-v8';
 
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -258,9 +258,9 @@ const FutureTimeline = () => {
         if (activeEra === 3) {
           ambient.currentTime = 10;
         }
-        // Era 4 (Ecological Engine) starts at 15 seconds in and is louder
+        // Era 4 (Ecological Engine) starts at 8 seconds in and is louder
         if (activeEra === 4) {
-          ambient.currentTime = 15;
+          ambient.currentTime = 8;
         }
 
         ambientRef.current = ambient;
@@ -284,7 +284,7 @@ const FutureTimeline = () => {
         if (isCancelled) return;
 
         const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${activeEra}.mp3?v=${AUDIO_VERSION}`);
-        voiceover.volume = isMuted ? 0 : 0.8;
+        voiceover.volume = isMuted ? 0 : 0.92;
         voiceoverRef.current = voiceover;
 
         await voiceover.play();
@@ -413,7 +413,7 @@ const FutureTimeline = () => {
       if (ambientRef.current) ambientRef.current.volume = 0;
     } else {
       if (backgroundMusicRef.current) backgroundMusicRef.current.volume = 0.05;
-      if (voiceoverRef.current) voiceoverRef.current.volume = 0.8;
+      if (voiceoverRef.current) voiceoverRef.current.volume = 0.92;
       // Ambient volume is handled by main audio effect based on era
     }
   }, [isMuted]);
