@@ -42,7 +42,7 @@ const IntroPage = ({ onStart }) => {
       </div>
 
       {/* --- CONTENT CONTAINER --- */}
-      <div className="relative z-20 max-w-4xl px-6 text-center space-y-12">
+      <div className="relative z-20 max-w-4xl px-6 text-center space-y-8">
 
         {/* Header Section */}
         <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0s' }}>
@@ -67,7 +67,7 @@ const IntroPage = ({ onStart }) => {
         </div>
 
         {/* The Divider / Insight */}
-        <div className="w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.3s' }}></div>
+        <div className="w-px h-12 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.3s' }}></div>
 
         <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <p className="text-xl md:text-2xl font-serif italic text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -76,8 +76,41 @@ const IntroPage = ({ onStart }) => {
           </p>
         </div>
 
+        {/* --- BRANDING --- */}
+        <div className="flex flex-col items-center gap-3 pt-6 animate-fade-in" style={{ animationDelay: '0.7s' }}>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-500/50">
+            Presented By
+          </p>
+
+          <p className="text-emerald-400 text-sm font-bold tracking-wide">
+            The Future Concern
+          </p>
+
+          <div
+            className="relative group cursor-pointer"
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+          >
+            {/* Animated Headphones Video */}
+            <div className="w-20 h-20 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-900/10 overflow-hidden group-hover:border-emerald-500/60 transition-all duration-700">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              >
+                <source src="/timelineofthefuture/video/headphones.mp4" type="video/mp4" />
+              </video>
+            </div>
+
+            {/* Subtle Glow behind the logo */}
+            <div className={`absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full transition-opacity duration-700 ${isHovering ? 'opacity-50' : 'opacity-0'}`}></div>
+          </div>
+        </div>
+
         {/* CTA Button */}
-        <div className="pt-8 animate-fade-in" style={{ animationDelay: '0.7s' }}>
+        <div className="pt-6 animate-fade-in" style={{ animationDelay: '0.9s' }}>
           <button
             onClick={onStart}
             className="group relative px-8 py-4 bg-white text-black font-bold tracking-widest uppercase text-sm hover:bg-gray-200 transition-all duration-300 flex items-center gap-3 mx-auto"
@@ -90,40 +123,6 @@ const IntroPage = ({ onStart }) => {
           </button>
         </div>
 
-      </div>
-
-      {/* --- FOOTER: BRANDING --- */}
-      {/* Sleek integration of The Future Concern Logo */}
-      <div className="absolute bottom-10 flex flex-col items-center gap-3 animate-fade-in" style={{ animationDelay: '0.9s' }}>
-        <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-500/50">
-          Presented By
-        </p>
-
-        <p className="text-emerald-400 text-sm font-bold tracking-wide">
-          The Future Concern
-        </p>
-
-        <div
-          className="relative group cursor-pointer"
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
-        >
-          {/* Animated Headphones Video */}
-          <div className="w-24 h-24 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-900/10 overflow-hidden group-hover:border-emerald-500/60 transition-all duration-700">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-            >
-              <source src="/timelineofthefuture/video/headphones.mp4" type="video/mp4" />
-            </video>
-          </div>
-
-          {/* Subtle Glow behind the logo */}
-          <div className={`absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full transition-opacity duration-700 ${isHovering ? 'opacity-50' : 'opacity-0'}`}></div>
-        </div>
       </div>
 
     </div>
