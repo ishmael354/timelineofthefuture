@@ -9,7 +9,7 @@ import IntroPage from './IntroPage';
 import EndPage from './EndPage';
 
 // Cache-busting version for audio files - update this to force refresh
-const AUDIO_VERSION = '20251121-v2';
+const AUDIO_VERSION = '20251121-v3';
 
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);

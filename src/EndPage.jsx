@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { RotateCcw, Share2, ArrowRight } from 'lucide-react';
 
 // Cache-busting version for video - update to force refresh
-const VIDEO_VERSION = '20251121-v2';
+const VIDEO_VERSION = '20251121-v3';
 
 const EndPage = ({ onRestart }) => {
   const videoRef = useRef(null);
