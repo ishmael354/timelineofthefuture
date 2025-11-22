@@ -9,7 +9,7 @@ import IntroPage from './IntroPage';
 import EndPage from './EndPage';
 
 // Cache-busting version for audio files - update this to force refresh
-const AUDIO_VERSION = '20251121-v9';
+const AUDIO_VERSION = '20251121-v10';
 
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -496,8 +496,52 @@ const FutureTimeline = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-white/20 flex flex-col md:flex-row overflow-hidden relative">
+
+      {/* Animated Wave Background Style */}
+      <style>{`
+        @keyframes wave-flow {
+          0% { transform: translateX(0) translateY(0); }
+          50% { transform: translateX(-25%) translateY(-5%); }
+          100% { transform: translateX(0) translateY(0); }
+        }
+        .wave-animate { animation: wave-flow 8s ease-in-out infinite; }
+      `}</style>
+
       {/* Left Rail: Navigation & Context */}
       <div className={`w-full md:w-1/3 border-r border-white/10 flex flex-col justify-between transition-colors duration-700 order-2 md:order-1 ${eras[activeEra].bg} bg-opacity-20`}>
+
+        {/* Branded Header - Desktop only at top */}
+        <div className="hidden md:block relative overflow-hidden border-b border-emerald-500/20 bg-gradient-to-br from-emerald-950/40 to-black">
+          {/* Animated Wave Background */}
+          <div className="absolute inset-0 opacity-20">
+            <svg className="w-full h-full wave-animate" viewBox="0 0 1200 120" preserveAspectRatio="none">
+              <path d="M0,50 Q300,0 600,50 T1200,50 L1200,120 L0,120 Z" fill="url(#wave-gradient)" />
+              <defs>
+                <linearGradient id="wave-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
+                  <stop offset="50%" stopColor="#34d399" stopOpacity="0.5" />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity="0.3" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10 p-6 flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-900/20 overflow-hidden flex-shrink-0">
+              <img
+                src="/timelineofthefuture/video/The Future Concern Logo.png"
+                alt="The Future Concern"
+                className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity"
+              />
+            </div>
+            <div>
+              <div className="text-emerald-400 font-bold text-sm tracking-wide">The Future Concern</div>
+              <div className="text-emerald-600/80 text-xs">A framework for understanding tomorrow</div>
+            </div>
+          </div>
+        </div>
+
         <div className="p-6 h-[calc(100vh-80px)] overflow-y-auto custom-scrollbar">
           <h1 className="text-xs font-bold tracking-[0.2em] uppercase text-white/40 mb-8 flex items-center gap-2 sticky top-0 bg-black/0 backdrop-blur-sm py-4 z-20">
             <Activity size={14} /> The History of the Future
@@ -523,6 +567,37 @@ const FutureTimeline = () => {
                 </div>
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Branded Footer - Mobile only */}
+        <div className="md:hidden fixed bottom-[80px] left-0 right-0 z-50 bg-gradient-to-br from-emerald-950/90 to-black/95 border-t border-emerald-500/20 backdrop-blur-md">
+          {/* Animated Wave Background */}
+          <div className="absolute inset-0 opacity-20">
+            <svg className="w-full h-full wave-animate" viewBox="0 0 1200 80" preserveAspectRatio="none">
+              <path d="M0,40 Q300,10 600,40 T1200,40 L1200,80 L0,80 Z" fill="url(#wave-gradient-mobile)" />
+              <defs>
+                <linearGradient id="wave-gradient-mobile" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
+                  <stop offset="50%" stopColor="#34d399" stopOpacity="0.5" />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity="0.3" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10 p-4 flex items-center justify-center gap-3">
+            <div className="w-10 h-10 rounded-full border border-emerald-500/50 flex items-center justify-center bg-emerald-900/20 overflow-hidden flex-shrink-0">
+              <img
+                src="/timelineofthefuture/video/The Future Concern Logo.png"
+                alt="The Future Concern"
+                className="w-full h-full object-cover opacity-90"
+              />
+            </div>
+            <div className="text-center">
+              <div className="text-emerald-400 font-bold text-xs tracking-wide">The Future Concern</div>
+            </div>
           </div>
         </div>
 
@@ -571,6 +646,15 @@ const FutureTimeline = () => {
              particles={particleMap}
            />
            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent md:bg-gradient-to-r md:from-black md:via-black/50 md:to-transparent"></div>
+
+           {/* Subtle Watermark */}
+           <div className="absolute top-8 right-8 w-20 h-20 opacity-10 hover:opacity-20 transition-opacity duration-500 pointer-events-none">
+             <img
+               src="/timelineofthefuture/video/The Future Concern Logo.png"
+               alt=""
+               className="w-full h-full object-contain filter grayscale"
+             />
+           </div>
         </div>
 
         <div className="relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 max-w-4xl pb-24 md:pb-8">

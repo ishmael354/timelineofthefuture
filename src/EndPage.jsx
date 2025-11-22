@@ -64,9 +64,21 @@ const EndPage = ({ onRestart }) => {
 
         {/* Logo/Title */}
         <div className="space-y-6">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-24 h-24 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-900/20 overflow-hidden">
+              <img
+                src="/timelineofthefuture/video/The Future Concern Logo.png"
+                alt="The Future Concern"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
           <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-none">
             The Future Concern
           </h1>
+          <p className="text-emerald-400 text-sm md:text-base tracking-widest uppercase">
+            Presents: The History of the Future
+          </p>
         </div>
 
         {/* Mission Statement */}
@@ -79,6 +91,14 @@ const EndPage = ({ onRestart }) => {
             We dig through history, media, and technology to expose the futures we're being sold
             and to help design better ones.
           </p>
+          <a
+            href="https://thefutureconcern.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block text-emerald-400 hover:text-emerald-300 text-sm font-medium underline transition-colors"
+          >
+            Learn more at thefutureconcern.io
+          </a>
         </div>
 
         {/* Divider */}

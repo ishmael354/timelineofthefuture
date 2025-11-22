@@ -86,7 +86,7 @@ const IntroPage = ({ onStart }) => {
       {/* --- FOOTER: BRANDING --- */}
       {/* Sleek integration of The Future Concern Logo */}
       <div className="absolute bottom-10 flex flex-col items-center gap-4 animate-fade-in" style={{ animationDelay: '0.9s' }}>
-        <p className="text-[10px] uppercase tracking-[0.2em] text-white/30">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-500/50">
           Presented By
         </p>
 
@@ -96,16 +96,21 @@ const IntroPage = ({ onStart }) => {
           onMouseLeave={() => setIsHovering(false)}
         >
           {/* The Logo Image */}
-          {/* Using a CSS filter to make it monochrome by default, revealing color on hover */}
-          <img
-            src="/timelineofthefuture/video/The Future Concern Logo.png"
-            alt="The Future Concern"
-            className="w-16 h-16 object-contain transition-all duration-700 ease-out filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100"
-          />
+          <div className="w-20 h-20 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-900/10 overflow-hidden group-hover:border-emerald-500/60 transition-all duration-700">
+            <img
+              src="/timelineofthefuture/video/The Future Concern Logo.png"
+              alt="The Future Concern"
+              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700"
+            />
+          </div>
 
-          {/* Subtle Glow behind the logo (The "Concern" Vibe) */}
-          <div className={`absolute inset-0 bg-green-500/20 blur-2xl rounded-full transition-opacity duration-700 ${isHovering ? 'opacity-50' : 'opacity-0'}`}></div>
+          {/* Subtle Glow behind the logo */}
+          <div className={`absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full transition-opacity duration-700 ${isHovering ? 'opacity-50' : 'opacity-0'}`}></div>
         </div>
+
+        <p className="text-emerald-400/70 text-xs font-medium">
+          The Future Concern
+        </p>
       </div>
 
     </div>
