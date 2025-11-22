@@ -9,7 +9,7 @@ import IntroPage from './IntroPage';
 import EndPage from './EndPage';
 
 // Cache-busting version for audio files - update this to force refresh
-const AUDIO_VERSION = '20251121-v5';
+const AUDIO_VERSION = '20251121-v6';
 
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -520,7 +520,7 @@ const FutureTimeline = () => {
         </div>
 
         {/* Controls */}
-        <div className="p-6 border-t border-white/10 bg-black/40 backdrop-blur-md h-[80px] flex items-center">
+        <div className="p-6 border-t border-white/10 bg-black/90 backdrop-blur-md h-[80px] flex items-center fixed md:relative bottom-0 left-0 right-0 z-50 md:z-auto">
           <div className="flex items-center justify-between gap-4 w-full">
             <button onClick={handlePrev} className="p-3 rounded-full hover:bg-white/10 transition-colors"><ArrowLeft size={20}/></button>
             {!audioEnabled && (
@@ -566,7 +566,7 @@ const FutureTimeline = () => {
            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent md:bg-gradient-to-r md:from-black md:via-black/50 md:to-transparent"></div>
         </div>
 
-        <div className="relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 max-w-4xl">
+        <div className="relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 max-w-4xl pb-24 md:pb-8">
           <div className="transition-all duration-700 ease-out">
             {/* Engine Tag */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-6 transition-all duration-500">
