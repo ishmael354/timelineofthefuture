@@ -269,12 +269,12 @@ const FutureTimeline = () => {
         if (isCancelled) return;
         console.log(`Playing ambient sound for era ${activeEra}`);
 
-        // Fade in ambient - eras 3 and 4 are louder (0.3), era 5 is quieter (0.105), others 0.15
+        // Fade in ambient - eras 3 and 4 are louder (0.3), era 5 is quieter (0.05), others 0.15
         let targetVolume = 0.15;
         if (activeEra === 3 || activeEra === 4) {
           targetVolume = 0.3;
         } else if (activeEra === 5) {
-          targetVolume = 0.105;
+          targetVolume = 0.05;
         }
         fadeInInterval = setInterval(() => {
           if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : targetVolume)) {
@@ -604,7 +604,13 @@ const FutureTimeline = () => {
         {/* Controls */}
         <div className="p-6 border-t border-white/10 bg-black/95 backdrop-blur-md h-[80px] flex items-center fixed md:relative bottom-0 left-0 right-0 z-50 md:z-auto">
           <div className="flex items-center justify-between gap-4 w-full">
-            <button onClick={handlePrev} className="p-3 rounded-full bg-white/5 border border-white/20 hover:bg-white/10 transition-colors"><ArrowLeft size={20}/></button>
+            <button
+              onClick={handlePrev}
+              className="p-4 rounded-full bg-white text-black hover:bg-gray-200 transition-colors shadow-xl font-bold"
+              aria-label="Previous Era"
+            >
+              <ArrowLeft size={28}/>
+            </button>
             {!audioEnabled && (
               <button
                 onClick={() => setAudioEnabled(true)}
@@ -617,18 +623,24 @@ const FutureTimeline = () => {
             {audioEnabled && (
               <div className="flex-grow"></div>
             )}
-            <button onClick={handleNext} className="p-3 rounded-full bg-white/5 border border-white/20 hover:bg-white/10 transition-colors"><ArrowRight size={20}/></button>
+            <button
+              onClick={handleNext}
+              className="p-4 rounded-full bg-white text-black hover:bg-gray-200 transition-colors shadow-xl font-bold"
+              aria-label="Next Era"
+            >
+              <ArrowRight size={28}/>
+            </button>
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className={`p-3 rounded-full transition-colors border ${
+              className={`p-4 rounded-full transition-colors shadow-xl font-bold ${
                 isMuted
-                  ? 'bg-red-500/20 hover:bg-red-500/30 border-red-500/40'
-                  : 'bg-white/5 border-white/20 hover:bg-white/10'
+                  ? 'bg-red-500 hover:bg-red-400 text-white'
+                  : 'bg-white/50 hover:bg-white/70 text-black border-2 border-white'
               }`}
               aria-label={isMuted ? 'Unmute' : 'Mute'}
               title={isMuted ? 'Unmute' : 'Mute'}
             >
-              {isMuted ? <VolumeX size={20}/> : <Volume2 size={20}/>}
+              {isMuted ? <VolumeX size={28}/> : <Volume2 size={28}/>}
             </button>
           </div>
         </div>
@@ -657,10 +669,10 @@ const FutureTimeline = () => {
            </div>
         </div>
 
-        <div className="relative z-10 flex-grow flex flex-col justify-center p-8 md:p-24 max-w-4xl pb-40 md:pb-8">
+        <div className="relative z-10 flex-grow flex flex-col justify-start md:justify-center p-8 md:p-24 max-w-4xl pt-8 pb-[160px] md:pb-8">
           <div className="transition-all duration-700 ease-out">
             {/* Engine Tag */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-6 transition-all duration-500">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 w-fit mb-4 transition-all duration-500">
               <span className={`${eras[activeEra].color} transition-colors duration-500`}>{eras[activeEra].engineIcon}</span>
               <span className={`text-xs font-mono uppercase tracking-wider ${eras[activeEra].color} transition-colors duration-500`}>
                 {eras[activeEra].engine}
@@ -668,17 +680,17 @@ const FutureTimeline = () => {
             </div>
 
             {/* Title */}
-            <h2 className="font-bold mb-6 leading-tight tracking-tight transition-all duration-500 text-4xl md:text-6xl lg:text-7xl min-h-[120px] md:min-h-[180px] flex items-center">
+            <h2 className="font-bold mb-4 leading-tight tracking-tight transition-all duration-500 text-4xl md:text-6xl lg:text-7xl md:min-h-[180px]">
               {eras[activeEra].title}
             </h2>
 
             {/* Epoch Badge */}
-            <div className="mb-8 opacity-50 font-mono transition-all duration-500 text-sm border-l border-white/30 pl-3">
+            <div className="mb-6 opacity-50 font-mono transition-all duration-500 text-sm border-l border-white/30 pl-3">
               {eras[activeEra].epoch}
             </div>
 
             {/* Narrative */}
-            <p className="font-light leading-relaxed mb-12 transition-all duration-500 text-lg md:text-xl text-gray-300 max-w-2xl min-h-[160px]">
+            <p className="font-light leading-relaxed mb-8 transition-all duration-500 text-lg md:text-xl text-gray-300 max-w-2xl">
               {eras[activeEra].narrative}
             </p>
 
@@ -728,7 +740,7 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
               <div className={`w-[500px] h-[500px] rounded-full border-2 border-dashed ${borderColor} opacity-50 animate-spin-slow`}></div>
            </div>
            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 ${shapeColor} blur-3xl animate-pulse`}></div>
-           <div className="absolute bottom-10 right-10 text-9xl opacity-30 font-serif">SUN</div>
+           <div className="absolute bottom-32 md:bottom-10 right-10 text-9xl opacity-30 font-serif">SUN</div>
         </div>
       )}
 
