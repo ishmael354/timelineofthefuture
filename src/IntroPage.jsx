@@ -10,7 +10,7 @@ const IntroPage = ({ onStart }) => {
 
   useEffect(() => {
     // Start intro music on mount
-    const audio = new Audio(`/timelineofthefuture/audio/music/intro.mp3?v=${AUDIO_VERSION}`);
+    const audio = new Audio(`/timelineofthefuture/audio/music/intro.aac?v=${AUDIO_VERSION}`);
     audio.loop = true;
     audio.volume = 0.3; // Moderate volume for intro
     audioRef.current = audio;
