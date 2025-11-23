@@ -18,11 +18,27 @@ const IntroPage = ({ onStart }) => {
     // Attempt autoplay
     audio.play().catch(error => {
       console.log('Intro music autoplay blocked:', error.message);
-      // Autoplay blocked - will need user interaction
+      // Will play on first user interaction
     });
+
+    // Handler to start audio on any user interaction
+    const handleInteraction = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().catch(err => console.log('Audio play failed:', err));
+      }
+      // Remove listeners after first interaction
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+    };
+
+    // Add interaction listeners for Safari/mobile
+    document.addEventListener('click', handleInteraction);
+    document.addEventListener('touchstart', handleInteraction);
 
     // Cleanup on unmount
     return () => {
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
