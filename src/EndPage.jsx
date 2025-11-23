@@ -89,7 +89,7 @@ const EndPage = ({ onRestart }) => {
           </p>
           <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed max-w-2xl mx-auto">
             We dig through history, media, and technology to expose the futures we're being sold
-            and to help design better ones.
+            and to help design better ones. Join the Concern today.
           </p>
           <a
             href="https://thefutureconcern.io"

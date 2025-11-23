@@ -56,7 +56,7 @@ const IntroPage = ({ onStart }) => {
           </div>
 
           <div className="inline-block px-3 py-1 border border-white/20 rounded-full text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">
-            Interactive Timeline
+            Incoming Transmission
           </div>
           <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-none bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">
             The History <br /> of the Future
@@ -71,8 +71,8 @@ const IntroPage = ({ onStart }) => {
 
         <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <p className="text-lg md:text-xl lg:text-2xl font-serif italic text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
-            "We talk about the future like it's a place we are going to. <br className="hidden md:block"/>
-            But the future is not a destination. It is a tool we built."
+            "The future is not a destination. <br className="hidden md:block"/>
+            It is a tool we built."
           </p>
         </div>
 

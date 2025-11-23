@@ -66,7 +66,7 @@ const FutureTimeline = () => {
       epoch: "Cambrian Explosion / 541 MYA",
       color: "text-emerald-400",
       bg: "bg-emerald-950",
-      narrative: "Brains evolve to manage movement. A predator predicts where prey *will be* to avoid wasting calories chasing where it *was*. The future shifts from a passive chemical clock to a split-second active simulation running inside a nervous system.",
+      narrative: "Brains evolve to manage movement. A predator predicts where prey will be to avoid wasting calories chasing where it was. The future shifts from a passive chemical clock to a split-second active simulation running inside a nervous system.",
       insight: "The Future is a target (Split-Second)."
     },
     {
@@ -99,7 +99,7 @@ const FutureTimeline = () => {
       epoch: "Agricultural Revolution / 10,000 BCE",
       color: "text-amber-400",
       bg: "bg-amber-950",
-      narrative: "We stop chasing the future (hunting) and start planting it (farming). This is the invention of 'Delayed Gratification.' Humans accept the pain of labor *now* for a harvest *later*. The future becomes a contract: Work today, eat tomorrow.",
+      narrative: "We stop chasing the future (hunting) and start planting it (farming). This is the invention of 'Delayed Gratification.' Humans accept the pain of labor now for a harvest later. The future becomes a contract: Work today, eat tomorrow.",
       insight: "The Future is a contract."
     },
     {
@@ -121,7 +121,7 @@ const FutureTimeline = () => {
       epoch: "Code of Hammurabi / 1750 BCE",
       color: "text-rose-400",
       bg: "bg-rose-950",
-      narrative: "Civilization requires more than just predicting the future; it requires *binding* it. We invent the 'Contract'—a tool that forces the future to happen. A promise ('I will pay you next month') becomes enforceable by the state. The future becomes an obligation.",
+      narrative: "Civilization requires more than just predicting the future; it requires binding it. We invent the 'Contract'—a tool that forces the future to happen. A promise ('I will pay you next month') becomes enforceable by the state. The future becomes an obligation.",
       insight: "The Future is an obligation."
     },
     {
@@ -176,7 +176,7 @@ const FutureTimeline = () => {
       epoch: "Railroad Time / 1847 AD",
       color: "text-teal-400",
       bg: "bg-teal-950",
-      narrative: "Trains travel faster than the sun. To prevent collisions, we abolish local solar time and invent 'Standard Time' and Time Zones. The future ceases to be a local phenomenon; it becomes a synchronized global grid that everyone must obey.",
+      narrative: "Trains travel faster than the sun moves across the sky. To prevent collisions, we abolish local solar time and invent 'Standard Time' and Time Zones. The future ceases to be a local phenomenon; it becomes a synchronized global grid that everyone must obey.",
       insight: "The Future is a coordinated grid."
     },
     {
