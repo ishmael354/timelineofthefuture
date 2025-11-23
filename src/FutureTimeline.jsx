@@ -508,7 +508,7 @@ const FutureTimeline = () => {
       `}</style>
 
       {/* Left Rail: Navigation & Context */}
-      <div className={`w-full md:w-1/3 border-r border-white/10 flex flex-col justify-between transition-colors duration-700 order-2 md:order-1 ${eras[activeEra].bg} bg-opacity-20`}>
+      <div className={`w-full md:w-1/3 border-r border-white/10 flex flex-col md:h-screen transition-colors duration-700 order-2 md:order-1 ${eras[activeEra].bg} bg-opacity-20`}>
 
         {/* Branded Header - Desktop only at top */}
         <div className="hidden md:block relative overflow-hidden border-b border-emerald-500/20 bg-gradient-to-br from-emerald-950/40 to-black">
@@ -542,7 +542,7 @@ const FutureTimeline = () => {
           </div>
         </div>
 
-        <div className="p-6 h-[calc(100vh-80px)] overflow-y-auto custom-scrollbar">
+        <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
           <h1 className="text-xs font-bold tracking-[0.2em] uppercase text-white/40 mb-8 flex items-center gap-2 sticky top-0 bg-black/0 backdrop-blur-sm py-4 z-20">
             <Activity size={14} /> The History of the Future
           </h1>
