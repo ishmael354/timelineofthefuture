@@ -821,41 +821,71 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
 
       {/* 6. Agrarian / Seed */}
       {activeEra === 6 && (
-        <div className="absolute inset-0 flex items-center justify-center">
-           <div className={`absolute bottom-0 w-full h-1/2 ${shapeColor} opacity-40 blur-3xl animate-pulseSlow`}></div>
-           <div className="relative flex flex-col items-center gap-4">
-             {[...Array(5)].map((_, i) => (
-               <div key={`plant-${i}`} className="relative flex flex-col items-center animate-fadeIn" style={{animationDelay: `${i * 0.3}s`}}>
-                 <div className={`w-3 h-48 ${shapeColor} opacity-60 animate-grow`} style={{animationDelay: `${i * 0.3}s`}}></div>
-                 <div className={`absolute bottom-0 w-6 h-6 ${shapeColor} rounded-full opacity-80`}></div>
+        <div className="absolute inset-0 flex items-end justify-center pb-20">
+           {/* Growing ground glow */}
+           <div className={`absolute bottom-0 w-full h-1/3 ${shapeColor} opacity-30 blur-3xl animate-pulseSlow`}></div>
+
+           {/* Main plants growing from bottom */}
+           <div className="relative flex items-end justify-center gap-8 h-full w-full px-20">
+             {[180, 220, 260, 240, 200].map((height, i) => (
+               <div key={`plant-${i}`} className="relative flex flex-col items-center justify-end animate-fadeIn" style={{animationDelay: `${i * 0.2}s`}}>
+                 {/* Stem growing from seed */}
+                 <div className={`w-4 ${shapeColor} opacity-70 rounded-t-full animate-grow origin-bottom`}
+                      style={{height: `${height}px`, animationDelay: `${i * 0.2}s`, animationDuration: '3s'}}></div>
+                 {/* Seed at bottom */}
+                 <div className={`w-8 h-8 ${shapeColor} rounded-full opacity-80 shadow-lg`}
+                      style={{boxShadow: `0 0 20px currentColor`}}></div>
                </div>
              ))}
            </div>
-           <div className="absolute top-20 right-20 text-9xl opacity-20 font-serif">SEED</div>
-           {[...Array(15)].map((_, i) => (
-             <div key={`seed-${i}`} className={`absolute bottom-0 w-1 ${shapeColor} opacity-50 animate-grow`}
-                  style={{left: i * 6.66 + '%', height: Math.random() * 200 + 100 + 'px', animationDelay: `${i * 0.1}s`}}></div>
+
+           {/* Background field of smaller plants */}
+           {[...Array(20)].map((_, i) => (
+             <div key={`bg-plant-${i}`}
+                  className={`absolute bottom-0 w-2 ${shapeColor} opacity-40 rounded-t-full animate-grow origin-bottom`}
+                  style={{
+                    left: `${5 + i * 4.5}%`,
+                    height: `${80 + Math.random() * 150}px`,
+                    animationDelay: `${i * 0.1}s`,
+                    animationDuration: '2.5s'
+                  }}></div>
            ))}
+
+           <div className="absolute top-20 right-20 text-9xl opacity-30 font-serif text-white">SEED</div>
         </div>
       )}
 
       {/* 7. Archival / Writing */}
       {activeEra === 7 && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-            {/* Tablet/scroll effect */}
-            <div className="absolute inset-0 flex flex-col justify-center gap-6 p-20">
-              {[...Array(8)].map((_, i) => (
-                 <div key={`archive-${i}`} className="flex gap-4 animate-slideUp" style={{animationDelay: `${i * 0.15}s`}}>
-                   <div className={`h-3 ${shapeColor} rounded-full opacity-70`} style={{width: (60 + Math.random() * 40) + '%'}}></div>
-                   <div className={`h-3 ${shapeColor} rounded-full opacity-50`} style={{width: (20 + Math.random() * 20) + '%'}}></div>
+            {/* Rows of text appearing like writing on a scroll */}
+            <div className="absolute inset-0 flex flex-col justify-center gap-8 px-32 py-20">
+              {[...Array(10)].map((_, i) => (
+                 <div key={`archive-${i}`} className="flex gap-6 animate-slideUp opacity-0" style={{animationDelay: `${i * 0.2}s`, animationFillMode: 'forwards'}}>
+                   {/* Main text line */}
+                   <div className={`h-4 ${shapeColor} opacity-60 rounded-full shadow-lg`}
+                        style={{
+                          width: `${50 + Math.random() * 40}%`,
+                          boxShadow: '0 0 10px currentColor'
+                        }}></div>
+                   {/* Shorter secondary line */}
+                   <div className={`h-4 ${shapeColor} opacity-40 rounded-full`}
+                        style={{width: `${15 + Math.random() * 15}%`}}></div>
                  </div>
               ))}
             </div>
-            {/* Writing animation - pen effect */}
-            <div className={`absolute top-1/4 left-1/4 w-96 h-px ${shapeColor} opacity-60 animate-dash origin-left`}></div>
-            <div className={`absolute top-1/3 left-1/4 w-64 h-px ${shapeColor} opacity-60 animate-dash origin-left`} style={{animationDelay: '0.5s'}}></div>
-            <div className={`absolute top-[40%] left-1/4 w-80 h-px ${shapeColor} opacity-60 animate-dash origin-left`} style={{animationDelay: '1s'}}></div>
-            <div className="absolute right-20 bottom-32 md:bottom-20 text-9xl opacity-20 font-mono">REC</div>
+
+            {/* Writing lines being drawn */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-50">
+              <line x1="20%" y1="30%" x2="75%" y2="30%" stroke="currentColor" strokeWidth="3"
+                    className={`${color.replace('text-', 'text-')} animate-dash`} strokeDasharray="5,5" />
+              <line x1="20%" y1="45%" x2="60%" y2="45%" stroke="currentColor" strokeWidth="3"
+                    className={`${color.replace('text-', 'text-')} animate-dash`} strokeDasharray="5,5" style={{animationDelay: '0.5s'}} />
+              <line x1="20%" y1="60%" x2="70%" y2="60%" stroke="currentColor" strokeWidth="3"
+                    className={`${color.replace('text-', 'text-')} animate-dash`} strokeDasharray="5,5" style={{animationDelay: '1s'}} />
+            </svg>
+
+            <div className="absolute right-20 bottom-32 md:bottom-20 text-9xl opacity-30 font-mono text-white">REC</div>
         </div>
       )}
 
@@ -888,31 +918,36 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
 
       {/* 10. Risk / Equity */}
       {activeEra === 10 && (
-        <div className="absolute inset-0 flex items-center justify-center gap-3 overflow-hidden">
+        <div className="absolute inset-0 flex items-end justify-center gap-4 pb-32 px-20 overflow-hidden">
             {/* Animated bar chart showing volatility */}
-            {[20, 50, 30, 70, 45, 85, 95, 60, 100, 40, 75, 55].map((h, i) => (
-               <div key={`risk-${i}`} className="flex flex-col items-center gap-2">
-                 <div className={`w-12 ${shapeColor} opacity-70 animate-pulse transition-all duration-1000 shadow-lg`}
+            {[120, 280, 180, 380, 240, 450, 480, 320, 500, 220, 400, 300].map((h, i) => (
+               <div key={`risk-${i}`} className="flex flex-col items-center justify-end gap-2 h-full">
+                 {/* Bar */}
+                 <div className={`w-14 ${shapeColor} opacity-70 animate-pulse rounded-t-lg`}
                       style={{
-                        height: h + '%',
+                        height: `${h}px`,
                         animationDelay: `${i * 0.15}s`,
-                        boxShadow: `0 0 20px currentColor`
+                        boxShadow: `0 0 20px currentColor`,
+                        animationDuration: '2s'
                       }}></div>
-                 <div className={`w-12 h-1 ${shapeColor} opacity-30`}></div>
+                 {/* Base line */}
+                 <div className={`w-14 h-2 ${shapeColor} opacity-50 rounded-full`}></div>
                </div>
             ))}
+
             {/* Price line overlay */}
             <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-60">
               <path
-                d="M50,400 L150,300 L250,350 L350,200 L450,250 L550,100 L650,80 L750,150 L850,50 L950,100 L1050,120 L1150,90"
+                d="M50,550 L150,400 L250,450 L350,300 L450,350 L550,200 L650,180 L750,280 L850,150 L950,200 L1050,220 L1150,180"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="3"
+                strokeWidth="4"
                 className={`${color.replace('text-', 'text-')} animate-dash`}
                 strokeDasharray="10,5"
               />
             </svg>
-            <div className="absolute top-20 right-20 text-9xl opacity-20 font-serif">RISK</div>
+
+            <div className="absolute top-20 right-20 text-9xl opacity-30 font-serif text-white">RISK</div>
         </div>
       )}
 
