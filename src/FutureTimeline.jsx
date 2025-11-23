@@ -269,12 +269,12 @@ const FutureTimeline = () => {
         if (isCancelled) return;
         console.log(`Playing ambient sound for era ${activeEra}`);
 
-        // Fade in ambient - eras 3 and 4 are louder (0.3), era 5 is quieter (0.05), others 0.15
+        // Fade in ambient - eras 3 and 4 are louder (0.3), era 5 is quieter (0.08), others 0.15
         let targetVolume = 0.15;
         if (activeEra === 3 || activeEra === 4) {
           targetVolume = 0.3;
         } else if (activeEra === 5) {
-          targetVolume = 0.05;
+          targetVolume = 0.08;
         }
         fadeInInterval = setInterval(() => {
           if (ambientRef.current && ambientRef.current.volume < (isMuted ? 0 : targetVolume)) {
@@ -602,11 +602,11 @@ const FutureTimeline = () => {
         </div>
 
         {/* Controls */}
-        <div className="p-6 border-t border-white/10 bg-black/95 backdrop-blur-md h-[80px] flex items-center fixed md:relative bottom-0 left-0 right-0 z-50 md:z-auto">
+        <div className="p-6 border-t-4 border-emerald-500/30 bg-black h-[80px] flex items-center fixed md:relative bottom-0 left-0 right-0 z-50 md:z-auto">
           <div className="flex items-center justify-between gap-4 w-full">
             <button
               onClick={handlePrev}
-              className="p-4 rounded-full bg-white text-black hover:bg-gray-200 transition-colors shadow-xl font-bold"
+              className="p-4 rounded-full bg-white text-black hover:bg-gray-200 transition-colors shadow-2xl font-bold ring-2 ring-white/20"
               aria-label="Previous Era"
             >
               <ArrowLeft size={28}/>
@@ -625,17 +625,17 @@ const FutureTimeline = () => {
             )}
             <button
               onClick={handleNext}
-              className="p-4 rounded-full bg-white text-black hover:bg-gray-200 transition-colors shadow-xl font-bold"
+              className="p-4 rounded-full bg-white text-black hover:bg-gray-200 transition-colors shadow-2xl font-bold ring-2 ring-white/20"
               aria-label="Next Era"
             >
               <ArrowRight size={28}/>
             </button>
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className={`p-4 rounded-full transition-colors shadow-xl font-bold ${
+              className={`p-4 rounded-full transition-colors shadow-2xl font-bold ring-2 ${
                 isMuted
-                  ? 'bg-red-500 hover:bg-red-400 text-white'
-                  : 'bg-white/50 hover:bg-white/70 text-black border-2 border-white'
+                  ? 'bg-red-500 hover:bg-red-400 text-white ring-red-500/50'
+                  : 'bg-white/70 hover:bg-white text-black ring-white/30'
               }`}
               aria-label={isMuted ? 'Unmute' : 'Mute'}
               title={isMuted ? 'Unmute' : 'Mute'}
@@ -867,7 +867,7 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(255,255,255,0.1)_0%,transparent_70%)] animate-pulseSlow`}></div>
            <div className={`absolute top-0 w-1 h-full ${shapeColor} opacity-20`}></div>
            <div className={`absolute top-1/3 w-64 h-64 border-t-2 border-b-2 ${borderColor} rounded-full animate-spin-slow opacity-30`}></div>
-           <div className="absolute bottom-20 right-20 text-8xl opacity-10 font-serif">JUDGE</div>
+           <div className="absolute bottom-32 md:bottom-20 right-10 md:right-20 text-8xl opacity-10 font-serif">JUDGE</div>
         </div>
       )}
 
