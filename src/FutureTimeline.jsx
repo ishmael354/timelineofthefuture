@@ -822,25 +822,40 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
       {/* 6. Agrarian / Seed */}
       {activeEra === 6 && (
         <div className="absolute inset-0 flex items-center justify-center">
-           <div className={`absolute bottom-0 w-full h-1/3 ${shapeColor} opacity-30`}></div>
-           <div className="relative flex flex-col items-center">
-             <div className={`w-2 ${shapeColor} animate-grow`}></div>
-             <div className={`absolute bottom-0 w-4 h-4 ${shapeColor} rounded-full`}></div>
+           <div className={`absolute bottom-0 w-full h-1/2 ${shapeColor} opacity-40 blur-3xl animate-pulseSlow`}></div>
+           <div className="relative flex flex-col items-center gap-4">
+             {[...Array(5)].map((_, i) => (
+               <div key={`plant-${i}`} className="relative flex flex-col items-center animate-fadeIn" style={{animationDelay: `${i * 0.3}s`}}>
+                 <div className={`w-3 h-48 ${shapeColor} opacity-60 animate-grow`} style={{animationDelay: `${i * 0.3}s`}}></div>
+                 <div className={`absolute bottom-0 w-6 h-6 ${shapeColor} rounded-full opacity-80`}></div>
+               </div>
+             ))}
            </div>
-           <div className="absolute top-20 right-20 text-8xl opacity-10 font-serif">SEED</div>
-           {[...Array(10)].map((_, i) => (
-             <div key={`seed-${i}`} className={`absolute bottom-0 w-px h-32 ${shapeColor} opacity-30`} style={{left: i * 10 + '%'}}></div>
+           <div className="absolute top-20 right-20 text-9xl opacity-20 font-serif">SEED</div>
+           {[...Array(15)].map((_, i) => (
+             <div key={`seed-${i}`} className={`absolute bottom-0 w-1 ${shapeColor} opacity-50 animate-grow`}
+                  style={{left: i * 6.66 + '%', height: Math.random() * 200 + 100 + 'px', animationDelay: `${i * 0.1}s`}}></div>
            ))}
         </div>
       )}
 
       {/* 7. Archival / Writing */}
       {activeEra === 7 && (
-        <div className="absolute inset-0 flex flex-col justify-center gap-8 p-20 transform -skew-x-12 opacity-30">
-            {[...Array(5)].map((_, i) => (
-               <div key={`archive-${i}`} className={`h-2 w-full ${shapeColor} rounded-full`} style={{opacity: 1 - (i * 0.2)}}></div>
-            ))}
-             <div className="absolute right-20 bottom-20 text-9xl opacity-10 font-mono">REC</div>
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+            {/* Tablet/scroll effect */}
+            <div className="absolute inset-0 flex flex-col justify-center gap-6 p-20">
+              {[...Array(8)].map((_, i) => (
+                 <div key={`archive-${i}`} className="flex gap-4 animate-slideUp" style={{animationDelay: `${i * 0.15}s`}}>
+                   <div className={`h-3 ${shapeColor} rounded-full opacity-70`} style={{width: (60 + Math.random() * 40) + '%'}}></div>
+                   <div className={`h-3 ${shapeColor} rounded-full opacity-50`} style={{width: (20 + Math.random() * 20) + '%'}}></div>
+                 </div>
+              ))}
+            </div>
+            {/* Writing animation - pen effect */}
+            <div className={`absolute top-1/4 left-1/4 w-96 h-px ${shapeColor} opacity-60 animate-dash origin-left`}></div>
+            <div className={`absolute top-1/3 left-1/4 w-64 h-px ${shapeColor} opacity-60 animate-dash origin-left`} style={{animationDelay: '0.5s'}}></div>
+            <div className={`absolute top-[40%] left-1/4 w-80 h-px ${shapeColor} opacity-60 animate-dash origin-left`} style={{animationDelay: '1s'}}></div>
+            <div className="absolute right-20 bottom-32 md:bottom-20 text-9xl opacity-20 font-mono">REC</div>
         </div>
       )}
 
@@ -873,11 +888,31 @@ const BackgroundVisuals = ({ activeEra, color, particles }) => {
 
       {/* 10. Risk / Equity */}
       {activeEra === 10 && (
-        <div className="absolute inset-0 flex items-center justify-center gap-1 opacity-30">
-            {[20, 40, 30, 60, 50, 80, 90, 70, 100].map((h, i) => (
-               <div key={`risk-${i}`} className={`w-8 ${shapeColor} transition-all duration-1000`} style={{height: h + '%'}}></div>
+        <div className="absolute inset-0 flex items-center justify-center gap-3 overflow-hidden">
+            {/* Animated bar chart showing volatility */}
+            {[20, 50, 30, 70, 45, 85, 95, 60, 100, 40, 75, 55].map((h, i) => (
+               <div key={`risk-${i}`} className="flex flex-col items-center gap-2">
+                 <div className={`w-12 ${shapeColor} opacity-70 animate-pulse transition-all duration-1000 shadow-lg`}
+                      style={{
+                        height: h + '%',
+                        animationDelay: `${i * 0.15}s`,
+                        boxShadow: `0 0 20px currentColor`
+                      }}></div>
+                 <div className={`w-12 h-1 ${shapeColor} opacity-30`}></div>
+               </div>
             ))}
-            <div className="absolute top-20 right-20 text-8xl opacity-10 font-serif">RISK</div>
+            {/* Price line overlay */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-60">
+              <path
+                d="M50,400 L150,300 L250,350 L350,200 L450,250 L550,100 L650,80 L750,150 L850,50 L950,100 L1050,120 L1150,90"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                className={`${color.replace('text-', 'text-')} animate-dash`}
+                strokeDasharray="10,5"
+              />
+            </svg>
+            <div className="absolute top-20 right-20 text-9xl opacity-20 font-serif">RISK</div>
         </div>
       )}
 
