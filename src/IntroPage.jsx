@@ -1,8 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Play } from 'lucide-react';
+
+// Cache-busting version for audio
+const AUDIO_VERSION = '20251121-v12';
 
 const IntroPage = ({ onStart }) => {
   const [isHovering, setIsHovering] = useState(false);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    // Start intro music on mount
+    const audio = new Audio(`/timelineofthefuture/audio/music/intro.mp3?v=${AUDIO_VERSION}`);
+    audio.loop = true;
+    audio.volume = 0.3; // Moderate volume for intro
+    audioRef.current = audio;
+
+    // Attempt autoplay
+    audio.play().catch(error => {
+      console.log('Intro music autoplay blocked:', error.message);
+      // Autoplay blocked - will need user interaction
+    });
+
+    // Cleanup on unmount
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    };
+  }, []);
 
   return (
     <div className="relative w-full h-screen bg-black text-white overflow-hidden font-sans flex flex-col items-center justify-center">
