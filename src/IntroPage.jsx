@@ -99,7 +99,7 @@ const IntroPage = ({ onStart }) => {
   }, []);
 
   return (
-    <div className="relative w-full h-screen bg-black text-white overflow-hidden font-sans flex flex-col items-center justify-center">
+    <div className="relative w-full min-h-screen bg-black text-white overflow-y-auto font-sans flex flex-col items-center justify-center py-8 md:py-0">
 
       {/* --- CUSTOM ANIMATIONS --- */}
       <style>{`
@@ -145,12 +145,12 @@ const IntroPage = ({ onStart }) => {
       </div>
 
       {/* --- CONTENT CONTAINER --- */}
-      <div className="relative z-20 max-w-4xl px-6 text-center space-y-4 md:space-y-8 py-8">
+      <div className="relative z-20 max-w-4xl px-4 md:px-6 text-center space-y-3 md:space-y-6 py-4 md:py-8">
 
         {/* Header Section */}
-        <div className="space-y-4 md:space-y-6 animate-fade-in" style={{ animationDelay: '0s' }}>
+        <div className="space-y-3 md:space-y-5 animate-fade-in" style={{ animationDelay: '0s' }}>
           {/* Banner Image */}
-          <div className="flex justify-center mb-4 md:mb-6">
+          <div className="flex justify-center mb-3 md:mb-5">
             <a
               href="https://thefutureconcern.io"
               target="_blank"
@@ -160,12 +160,12 @@ const IntroPage = ({ onStart }) => {
               <img
                 src="/video/banner.png"
                 alt="The History of the Future"
-                className="max-w-full md:max-w-2xl w-full h-auto px-4"
+                className="max-w-full md:max-w-2xl w-full h-auto px-2 md:px-4"
               />
             </a>
           </div>
 
-          <div className="relative inline-block mb-4">
+          <div className="relative inline-block mb-2 md:mb-4">
             {/* Animated sine wave background */}
             <div className="absolute inset-0 overflow-hidden rounded-full">
               <svg className="absolute top-1/2 left-1/2 -translate-y-1/2 w-[200%] h-[200%] animate-wave-flow" viewBox="0 0 400 100" preserveAspectRatio="none">
@@ -187,31 +187,31 @@ const IntroPage = ({ onStart }) => {
             </div>
 
             {/* Pill badge */}
-            <div className="relative px-3 py-1 border border-emerald-500/40 rounded-full text-[10px] uppercase tracking-[0.3em] text-emerald-400 bg-emerald-950/30 backdrop-blur-sm shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+            <div className="relative px-2 md:px-3 py-1 border border-emerald-500/40 rounded-full text-[8px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.3em] text-emerald-400 bg-emerald-950/30 backdrop-blur-sm shadow-[0_0_20px_rgba(16,185,129,0.2)]">
               Incoming Transmission
             </div>
           </div>
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-none bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-tight md:leading-none bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">
             The History <br /> of the Future
           </h1>
-          <p className="text-lg md:text-xl text-gray-400 font-light tracking-wide max-w-2xl mx-auto">
+          <p className="text-base md:text-lg lg:text-xl text-gray-400 font-light tracking-wide max-w-2xl mx-auto px-2">
             How biology, culture, and algorithms invented "The Future."
           </p>
         </div>
 
         {/* The Divider / Insight */}
-        <div className="w-px h-8 md:h-12 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.3s' }}></div>
+        <div className="w-px h-6 md:h-10 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.3s' }}></div>
 
         <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <p className="text-lg md:text-xl lg:text-2xl font-serif italic text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
-            "The future is not a destination. <br className="hidden md:block"/>
+          <p className="text-base md:text-lg lg:text-xl font-serif italic text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
+            "The future is not a destination. <br className="hidden sm:block"/>
             It is a tool we built."
           </p>
         </div>
 
         {/* --- BRANDING --- */}
-        <div className="flex flex-col items-center gap-2 md:gap-3 pt-4 md:pt-6 animate-fade-in" style={{ animationDelay: '0.7s' }}>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-500/50">
+        <div className="flex flex-col items-center gap-2 md:gap-3 pt-3 md:pt-5 animate-fade-in" style={{ animationDelay: '0.7s' }}>
+          <p className="text-[8px] md:text-[10px] uppercase tracking-[0.2em] text-emerald-500/50">
             Presented By
           </p>
 
@@ -219,7 +219,7 @@ const IntroPage = ({ onStart }) => {
             href="https://thefutureconcern.io"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-emerald-400 text-sm font-bold tracking-wide hover:text-emerald-300 transition-colors cursor-pointer"
+            className="text-emerald-400 text-xs md:text-sm font-bold tracking-wide hover:text-emerald-300 transition-colors cursor-pointer"
           >
             The Future Concern
           </a>
@@ -230,7 +230,7 @@ const IntroPage = ({ onStart }) => {
             onMouseLeave={() => setIsHovering(false)}
           >
             {/* Animated Headphones Video */}
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-900/10 overflow-hidden group-hover:border-emerald-500/60 transition-all duration-700">
+            <div className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-900/10 overflow-hidden group-hover:border-emerald-500/60 transition-all duration-700">
               <video
                 autoPlay
                 loop
@@ -248,13 +248,13 @@ const IntroPage = ({ onStart }) => {
         </div>
 
         {/* CTA Button */}
-        <div className="pt-4 md:pt-6 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+        <div className="pt-3 md:pt-5 pb-4 animate-fade-in" style={{ animationDelay: '0.9s' }}>
           <button
             onClick={onStart}
-            className="group relative px-8 py-4 bg-white text-black font-bold tracking-widest uppercase text-sm hover:bg-gray-200 transition-all duration-300 flex items-center gap-3 mx-auto shadow-2xl"
+            className="group relative px-6 md:px-8 py-3 md:py-4 bg-white text-black font-bold tracking-widest uppercase text-xs md:text-sm hover:bg-gray-200 transition-all duration-300 flex items-center gap-2 md:gap-3 mx-auto shadow-2xl"
           >
             Enter the Timeline
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
 
             {/* Button Glow Effect */}
             <div className="absolute inset-0 bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
