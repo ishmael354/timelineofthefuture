@@ -151,11 +151,18 @@ const IntroPage = ({ onStart }) => {
         <div className="space-y-4 md:space-y-6 animate-fade-in" style={{ animationDelay: '0s' }}>
           {/* Banner Image */}
           <div className="flex justify-center mb-4 md:mb-6">
-            <img
-              src="/video/banner.png"
-              alt="The History of the Future"
-              className="max-w-full md:max-w-2xl w-full h-auto px-4"
-            />
+            <a
+              href="https://thefutureconcern.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <img
+                src="/video/banner.png"
+                alt="The History of the Future"
+                className="max-w-full md:max-w-2xl w-full h-auto px-4"
+              />
+            </a>
           </div>
 
           <div className="relative inline-block mb-4">
@@ -208,9 +215,14 @@ const IntroPage = ({ onStart }) => {
             Presented By
           </p>
 
-          <p className="text-emerald-400 text-sm font-bold tracking-wide">
+          <a
+            href="https://thefutureconcern.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-400 text-sm font-bold tracking-wide hover:text-emerald-300 transition-colors cursor-pointer"
+          >
             The Future Concern
-          </p>
+          </a>
 
           <div
             className="relative group cursor-pointer"
