@@ -345,13 +345,6 @@ const FutureTimeline = () => {
         voiceover.volume = isMuted ? 0 : 0.92;
         voiceoverRef.current = voiceover;
 
-        // Skip slow intros for specific eras
-        if (activeEra === 12) {
-          voiceover.currentTime = 6; // Industrial Engine - start 6 seconds in
-        } else if (activeEra === 14) {
-          voiceover.currentTime = 3; // Strategic Engine - start 3 seconds in
-        }
-
         await voiceover.play();
         if (isCancelled) return;
         console.log(`Playing voiceover for era ${activeEra}`);
@@ -445,6 +438,13 @@ const FutureTimeline = () => {
           targetVolume = 0.04; // Slightly quieter
         } else if (musicTrack === 'background-5') {
           targetVolume = 0.08; // Risk Engine louder
+        }
+
+        // Skip slow intros for specific music tracks
+        if (musicTrack === 'background-6') {
+          music.currentTime = 6; // Industrial Engine - start 6 seconds in
+        } else if (musicTrack === 'background-7') {
+          music.currentTime = 3; // Strategic Engine - start 3 seconds in
         }
 
         // Set references BEFORE playing
