@@ -128,12 +128,27 @@ const IntroPage = ({ onStart }) => {
         }
 
         @keyframes wave-flow-horizontal {
-          0% { transform: translateX(-50%) scaleY(1); }
-          50% { transform: translateX(-50%) scaleY(1.2); }
-          100% { transform: translateX(-50%) scaleY(1); }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(50%); }
         }
         .animate-wave-flow {
-          animation: wave-flow-horizontal 3s ease-in-out infinite;
+          animation: wave-flow-horizontal 3s linear infinite;
+        }
+
+        @keyframes wave-flow-2 {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(50%); }
+        }
+        .animate-wave-flow-2 {
+          animation: wave-flow-2 4s linear infinite;
+        }
+
+        @keyframes wave-flow-3 {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(50%); }
+        }
+        .animate-wave-flow-3 {
+          animation: wave-flow-3 5s linear infinite;
         }
       `}</style>
 
@@ -160,31 +175,35 @@ const IntroPage = ({ onStart }) => {
 
           <div className="relative inline-block mb-4">
             {/* Animated sine wave background - positioned behind pill */}
-            <div className="absolute inset-0 -inset-x-8 -inset-y-4 overflow-visible rounded-full pointer-events-none">
-              <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full animate-wave-flow" viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet">
-                {/* Wave 1 - Larger amplitude */}
+            <div className="absolute inset-0 -inset-x-12 -inset-y-6 overflow-hidden rounded-full pointer-events-none">
+              {/* Wave 1 - Larger amplitude, slower */}
+              <svg className="absolute top-1/2 left-0 -translate-y-1/2 w-[300%] h-full animate-wave-flow" viewBox="0 0 600 40" preserveAspectRatio="none">
                 <path
-                  d="M0,20 Q5,10 10,20 T20,20 T30,20 T40,20 T50,20 T60,20 T70,20 T80,20 T90,20 T100,20 T110,20 T120,20 T130,20 T140,20 T150,20 T160,20 T170,20 T180,20 T190,20 T200,20"
+                  d="M-100,20 Q-75,8 -50,20 T0,20 T50,20 T100,20 T150,20 T200,20 T250,20 T300,20 T350,20 T400,20 T450,20 T500,20 T550,20 T600,20 T650,20 T700,20"
                   fill="none"
                   stroke="#10b981"
                   strokeWidth="2"
-                  opacity="0.5"
+                  opacity="0.6"
                 />
-                {/* Wave 2 - Medium amplitude */}
+              </svg>
+              {/* Wave 2 - Medium amplitude, medium speed */}
+              <svg className="absolute top-1/2 left-0 -translate-y-1/2 w-[300%] h-full animate-wave-flow-2" viewBox="0 0 600 40" preserveAspectRatio="none">
                 <path
-                  d="M0,20 Q5,14 10,20 T20,20 T30,20 T40,20 T50,20 T60,20 T70,20 T80,20 T90,20 T100,20 T110,20 T120,20 T130,20 T140,20 T150,20 T160,20 T170,20 T180,20 T190,20 T200,20"
+                  d="M-100,20 Q-75,12 -50,20 T0,20 T50,20 T100,20 T150,20 T200,20 T250,20 T300,20 T350,20 T400,20 T450,20 T500,20 T550,20 T600,20 T650,20 T700,20"
                   fill="none"
                   stroke="#34d399"
                   strokeWidth="1.5"
-                  opacity="0.4"
+                  opacity="0.5"
                 />
-                {/* Wave 3 - Small amplitude */}
+              </svg>
+              {/* Wave 3 - Small amplitude, faster */}
+              <svg className="absolute top-1/2 left-0 -translate-y-1/2 w-[300%] h-full animate-wave-flow-3" viewBox="0 0 600 40" preserveAspectRatio="none">
                 <path
-                  d="M0,20 Q5,16 10,20 T20,20 T30,20 T40,20 T50,20 T60,20 T70,20 T80,20 T90,20 T100,20 T110,20 T120,20 T130,20 T140,20 T150,20 T160,20 T170,20 T180,20 T190,20 T200,20"
+                  d="M-100,20 Q-75,15 -50,20 T0,20 T50,20 T100,20 T150,20 T200,20 T250,20 T300,20 T350,20 T400,20 T450,20 T500,20 T550,20 T600,20 T650,20 T700,20"
                   fill="none"
                   stroke="#6ee7b7"
                   strokeWidth="1"
-                  opacity="0.3"
+                  opacity="0.4"
                 />
               </svg>
             </div>
