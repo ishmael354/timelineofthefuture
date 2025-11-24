@@ -11,6 +11,27 @@ import EndPage from './EndPage';
 // Cache-busting version for audio files - update this to force refresh
 const AUDIO_VERSION = '20251121-v12';
 
+// Helper function to load audio with format fallback (mp3, aac, wav)
+const loadAudioWithFallback = async (basePath) => {
+  const formats = ['mp3', 'aac', 'wav'];
+  for (const format of formats) {
+    try {
+      const audio = new Audio(`${basePath}.${format}?v=${AUDIO_VERSION}`);
+      // Test if it can load
+      await new Promise((resolve, reject) => {
+        audio.addEventListener('canplay', resolve, { once: true });
+        audio.addEventListener('error', reject, { once: true });
+        audio.load();
+      });
+      return audio;
+    } catch (error) {
+      // Try next format
+      continue;
+    }
+  }
+  throw new Error(`No audio file found for ${basePath}`);
+};
+
 const FutureTimeline = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [showEnd, setShowEnd] = useState(false);
@@ -259,8 +280,8 @@ const FutureTimeline = () => {
       if (isCancelled) return;
 
       try {
-        // Step 1: Start main ambient sound first
-        const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3?v=${AUDIO_VERSION}`);
+        // Step 1: Start main ambient sound first (try mp3, aac, wav)
+        const ambient = await loadAudioWithFallback(`/timelineofthefuture/audio/ambient/era-${activeEra}`);
         ambient.loop = true;
         ambient.volume = 0; // Start at 0 for fade-in
 
@@ -298,8 +319,7 @@ const FutureTimeline = () => {
         const layers = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         for (const suffix of layers) {
           try {
-            const layerPath = `/timelineofthefuture/audio/ambient/era-${activeEra}${suffix}.mp3?v=${AUDIO_VERSION}`;
-            const layerAudio = new Audio(layerPath);
+            const layerAudio = await loadAudioWithFallback(`/timelineofthefuture/audio/ambient/era-${activeEra}${suffix}`);
             layerAudio.loop = true;
             layerAudio.volume = isMuted ? 0 : targetVolume * 0.8; // Layers slightly quieter
 
@@ -316,7 +336,7 @@ const FutureTimeline = () => {
         await new Promise(resolve => setTimeout(resolve, 2000));
         if (isCancelled) return;
 
-        const voiceover = new Audio(`/timelineofthefuture/audio/voiceovers/era-${activeEra}.mp3?v=${AUDIO_VERSION}`);
+        const voiceover = await loadAudioWithFallback(`/timelineofthefuture/audio/voiceovers/era-${activeEra}`);
         voiceover.volume = isMuted ? 0 : 0.92;
         voiceoverRef.current = voiceover;
 
@@ -402,9 +422,8 @@ const FutureTimeline = () => {
           if (isCancelled) return;
         }
 
-        // Start new music
-        const musicPath = `/timelineofthefuture/audio/music/${musicTrack}.mp3?v=${AUDIO_VERSION}`;
-        const music = new Audio(musicPath);
+        // Start new music (try mp3, aac, wav)
+        const music = await loadAudioWithFallback(`/timelineofthefuture/audio/music/${musicTrack}`);
         music.loop = true;
         music.volume = 0; // Start at 0 for fade-in
 

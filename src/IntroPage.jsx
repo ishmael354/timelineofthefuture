@@ -4,33 +4,67 @@ import { ArrowRight, Play } from 'lucide-react';
 // Cache-busting version for audio
 const AUDIO_VERSION = '20251121-v12';
 
+// Helper function to load audio with format fallback (mp3, aac, wav)
+const loadAudioWithFallback = async (basePath) => {
+  const formats = ['aac', 'mp3', 'wav'];
+  for (const format of formats) {
+    try {
+      const audio = new Audio(`${basePath}.${format}?v=${AUDIO_VERSION}`);
+      // Test if it can load
+      await new Promise((resolve, reject) => {
+        audio.addEventListener('canplay', resolve, { once: true });
+        audio.addEventListener('error', reject, { once: true });
+        audio.load();
+      });
+      return audio;
+    } catch (error) {
+      // Try next format
+      continue;
+    }
+  }
+  throw new Error(`No audio file found for ${basePath}`);
+};
+
 const IntroPage = ({ onStart }) => {
   const [isHovering, setIsHovering] = useState(false);
   const audioRef = useRef(null);
   const ambientRef = useRef(null);
 
   useEffect(() => {
-    // Start intro music on mount
-    const audio = new Audio(`/timelineofthefuture/audio/music/intro.aac?v=${AUDIO_VERSION}`);
-    audio.loop = true;
-    audio.volume = 0.3; // Moderate volume for intro
-    audioRef.current = audio;
+    const initAudio = async () => {
+      try {
+        // Start intro music on mount (try aac, mp3, wav)
+        const audio = await loadAudioWithFallback('/timelineofthefuture/audio/music/intro');
+        audio.loop = true;
+        audio.volume = 0.3; // Moderate volume for intro
+        audioRef.current = audio;
 
-    // Start intro ambient (era-00)
-    const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-00.mp3?v=${AUDIO_VERSION}`);
-    ambient.loop = true;
-    ambient.volume = 0.2; // Ambient layer
-    ambientRef.current = ambient;
+        // Attempt autoplay
+        audio.play().catch(error => {
+          console.log('Intro music autoplay blocked:', error.message);
+          // Will play on first user interaction
+        });
+      } catch (error) {
+        console.warn('Intro music not found:', error.message);
+      }
 
-    // Attempt autoplay for both
-    audio.play().catch(error => {
-      console.log('Intro music autoplay blocked:', error.message);
-      // Will play on first user interaction
-    });
+      try {
+        // Start intro ambient (era-00) - try aac, mp3, wav
+        const ambient = await loadAudioWithFallback('/timelineofthefuture/audio/ambient/era-00');
+        ambient.loop = true;
+        ambient.volume = 0.2; // Ambient layer
+        ambientRef.current = ambient;
 
-    ambient.play().catch(error => {
-      console.log('Intro ambient autoplay blocked:', error.message);
-    });
+        // Attempt autoplay
+        ambient.play().catch(error => {
+          console.log('Intro ambient autoplay blocked:', error.message);
+        });
+      } catch (error) {
+        console.warn('Intro ambient not found:', error.message);
+      }
+    };
+
+    initAudio();
 
     // Handler to start audio on any user interaction
     const handleInteraction = () => {
