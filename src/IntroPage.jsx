@@ -52,7 +52,7 @@ const IntroPage = ({ onStart }) => {
         // Start intro ambient (era-00) - try aac, mp3, wav
         const ambient = await loadAudioWithFallback('/timelineofthefuture/audio/ambient/era-00');
         ambient.loop = true;
-        ambient.volume = 0.2; // Ambient layer
+        ambient.volume = 0.05; // Ambient layer - reduced per user feedback
         ambientRef.current = ambient;
 
         // Attempt autoplay
