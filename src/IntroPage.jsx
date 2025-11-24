@@ -159,22 +159,32 @@ const IntroPage = ({ onStart }) => {
           </div>
 
           <div className="relative inline-block mb-4">
-            {/* Animated sine wave background */}
-            <div className="absolute inset-0 overflow-hidden rounded-full">
-              <svg className="absolute top-1/2 left-1/2 -translate-y-1/2 w-[200%] h-[200%] animate-wave-flow" viewBox="0 0 400 100" preserveAspectRatio="none">
+            {/* Animated sine wave background - positioned behind pill */}
+            <div className="absolute inset-0 -inset-x-8 -inset-y-4 overflow-visible rounded-full pointer-events-none">
+              <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full animate-wave-flow" viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet">
+                {/* Wave 1 - Larger amplitude */}
                 <path
-                  d="M0,50 Q10,30 20,50 T40,50 T60,50 T80,50 T100,50 T120,50 T140,50 T160,50 T180,50 T200,50 T220,50 T240,50 T260,50 T280,50 T300,50 T320,50 T340,50 T360,50 T380,50 T400,50"
+                  d="M0,20 Q5,10 10,20 T20,20 T30,20 T40,20 T50,20 T60,20 T70,20 T80,20 T90,20 T100,20 T110,20 T120,20 T130,20 T140,20 T150,20 T160,20 T170,20 T180,20 T190,20 T200,20"
                   fill="none"
                   stroke="#10b981"
-                  strokeWidth="1"
-                  opacity="0.3"
+                  strokeWidth="2"
+                  opacity="0.5"
                 />
+                {/* Wave 2 - Medium amplitude */}
                 <path
-                  d="M0,50 Q10,40 20,50 T40,50 T60,50 T80,50 T100,50 T120,50 T140,50 T160,50 T180,50 T200,50 T220,50 T240,50 T260,50 T280,50 T300,50 T320,50 T340,50 T360,50 T380,50 T400,50"
+                  d="M0,20 Q5,14 10,20 T20,20 T30,20 T40,20 T50,20 T60,20 T70,20 T80,20 T90,20 T100,20 T110,20 T120,20 T130,20 T140,20 T150,20 T160,20 T170,20 T180,20 T190,20 T200,20"
                   fill="none"
                   stroke="#34d399"
-                  strokeWidth="0.5"
-                  opacity="0.2"
+                  strokeWidth="1.5"
+                  opacity="0.4"
+                />
+                {/* Wave 3 - Small amplitude */}
+                <path
+                  d="M0,20 Q5,16 10,20 T20,20 T30,20 T40,20 T50,20 T60,20 T70,20 T80,20 T90,20 T100,20 T110,20 T120,20 T130,20 T140,20 T150,20 T160,20 T170,20 T180,20 T190,20 T200,20"
+                  fill="none"
+                  stroke="#6ee7b7"
+                  strokeWidth="1"
+                  opacity="0.3"
                 />
               </svg>
             </div>

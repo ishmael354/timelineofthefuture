@@ -154,7 +154,7 @@ const FutureTimeline = () => {
       epoch: "Axial Age / 800 BCE",
       color: "text-orange-300",
       bg: "bg-orange-950",
-      narrative: "Once we can farm and write, we start imagining the ultimate harvest—the End Times, the Golden Age, the Final Judgment. The future becomes morally loaded. It is no longer just what *will* happen, but what *should* happen.",
+      narrative: "Once we can farm and write, we start imagining the ultimate harvest—the End Times, the Golden Age, the Final Judgment. The future becomes morally loaded. It is no longer just what will happen, but what should happen.",
       insight: "The Future is a judgment."
     },
     {
@@ -323,6 +323,11 @@ const FutureTimeline = () => {
             layerAudio.loop = true;
             layerAudio.volume = isMuted ? 0 : targetVolume * 0.8; // Layers slightly quieter
 
+            // Skip intro for era 3 (Seasonal Engine) ambient - start 6 seconds in
+            if (activeEra === 3) {
+              layerAudio.currentTime = 6;
+            }
+
             await layerAudio.play();
             ambientLayersRef.current.push(layerAudio);
             console.log(`Playing ambient layer: era-${activeEra}${suffix}`);
@@ -339,6 +344,13 @@ const FutureTimeline = () => {
         const voiceover = await loadAudioWithFallback(`/timelineofthefuture/audio/voiceovers/era-${activeEra}`);
         voiceover.volume = isMuted ? 0 : 0.92;
         voiceoverRef.current = voiceover;
+
+        // Skip slow intros for specific eras
+        if (activeEra === 12) {
+          voiceover.currentTime = 6; // Industrial Engine - start 6 seconds in
+        } else if (activeEra === 14) {
+          voiceover.currentTime = 3; // Strategic Engine - start 3 seconds in
+        }
 
         await voiceover.play();
         if (isCancelled) return;
