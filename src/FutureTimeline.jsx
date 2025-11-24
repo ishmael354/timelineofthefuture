@@ -281,7 +281,7 @@ const FutureTimeline = () => {
 
       try {
         // Step 1: Start main ambient sound first (try mp3, aac, wav)
-        const ambient = await loadAudioWithFallback(`/timelineofthefuture/audio/ambient/era-${activeEra}`);
+        const ambient = await loadAudioWithFallback(`/audio/ambient/era-${activeEra}`);
         ambient.loop = true;
         ambient.volume = 0; // Start at 0 for fade-in
 
@@ -319,7 +319,7 @@ const FutureTimeline = () => {
         const layers = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         for (const suffix of layers) {
           try {
-            const layerAudio = await loadAudioWithFallback(`/timelineofthefuture/audio/ambient/era-${activeEra}${suffix}`);
+            const layerAudio = await loadAudioWithFallback(`/audio/ambient/era-${activeEra}${suffix}`);
             layerAudio.loop = true;
             layerAudio.volume = isMuted ? 0 : targetVolume * 0.8; // Layers slightly quieter
 
@@ -341,7 +341,7 @@ const FutureTimeline = () => {
         await new Promise(resolve => setTimeout(resolve, 2000));
         if (isCancelled) return;
 
-        const voiceover = await loadAudioWithFallback(`/timelineofthefuture/audio/voiceovers/era-${activeEra}`);
+        const voiceover = await loadAudioWithFallback(`/audio/voiceovers/era-${activeEra}`);
         voiceover.volume = isMuted ? 0 : 0.92;
         voiceoverRef.current = voiceover;
 
@@ -428,7 +428,7 @@ const FutureTimeline = () => {
         }
 
         // Start new music (try mp3, aac, wav)
-        const music = await loadAudioWithFallback(`/timelineofthefuture/audio/music/${musicTrack}`);
+        const music = await loadAudioWithFallback(`/audio/music/${musicTrack}`);
         music.loop = true;
         music.volume = 0; // Start at 0 for fade-in
 
@@ -614,7 +614,7 @@ const FutureTimeline = () => {
           <div className="relative z-10 p-6 flex items-center gap-4">
             <div className="w-16 h-16 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-900/20 overflow-hidden flex-shrink-0">
               <img
-                src="/timelineofthefuture/video/The Future Concern Logo.png"
+                src="/video/The Future Concern Logo.png"
                 alt="The Future Concern"
                 className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity"
               />
@@ -674,7 +674,7 @@ const FutureTimeline = () => {
           <div className="relative z-10 p-4 flex items-center justify-center gap-3">
             <div className="w-10 h-10 rounded-full border border-emerald-500/50 flex items-center justify-center bg-emerald-900/20 overflow-hidden flex-shrink-0">
               <img
-                src="/timelineofthefuture/video/The Future Concern Logo.png"
+                src="/video/The Future Concern Logo.png"
                 alt="The Future Concern"
                 className="w-full h-full object-cover opacity-90"
               />
@@ -746,7 +746,7 @@ const FutureTimeline = () => {
            {/* Subtle Watermark */}
            <div className="absolute top-8 right-8 w-20 h-20 opacity-10 hover:opacity-20 transition-opacity duration-500 pointer-events-none">
              <img
-               src="/timelineofthefuture/video/The Future Concern Logo.png"
+               src="/video/The Future Concern Logo.png"
                alt=""
                className="w-full h-full object-contain filter grayscale"
              />

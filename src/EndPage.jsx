@@ -50,7 +50,7 @@ const EndPage = ({ onRestart }) => {
       <div className="absolute inset-0 flex items-center justify-center opacity-20">
         <video
           ref={videoRef}
-          src={`/timelineofthefuture/video/logo.mp4?v=${VIDEO_VERSION}`}
+          src={`/video/logo.mp4?v=${VIDEO_VERSION}`}
           muted={false}
           playsInline
           onEnded={handleVideoEnded}
@@ -68,7 +68,7 @@ const EndPage = ({ onRestart }) => {
           <div className="flex items-center justify-center mb-4">
             <div className="w-24 h-24 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-900/20 overflow-hidden">
               <img
-                src="/timelineofthefuture/video/The Future Concern Logo.png"
+                src="/video/The Future Concern Logo.png"
                 alt="The Future Concern"
                 className="w-full h-full object-cover"
               />

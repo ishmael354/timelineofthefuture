@@ -34,7 +34,7 @@ const IntroPage = ({ onStart }) => {
     const initAudio = async () => {
       try {
         // Start intro music on mount (try aac, mp3, wav)
-        const audio = await loadAudioWithFallback('/timelineofthefuture/audio/music/intro');
+        const audio = await loadAudioWithFallback('/audio/music/intro');
         audio.loop = true;
         audio.volume = 0.3; // Moderate volume for intro
         audioRef.current = audio;
@@ -50,7 +50,7 @@ const IntroPage = ({ onStart }) => {
 
       try {
         // Start intro ambient (era-00) - try aac, mp3, wav
-        const ambient = await loadAudioWithFallback('/timelineofthefuture/audio/ambient/era-00');
+        const ambient = await loadAudioWithFallback('/audio/ambient/era-00');
         ambient.loop = true;
         ambient.volume = 0.05; // Ambient layer - reduced per user feedback
         ambientRef.current = ambient;
@@ -152,7 +152,7 @@ const IntroPage = ({ onStart }) => {
           {/* Banner Image */}
           <div className="flex justify-center mb-4 md:mb-6">
             <img
-              src="/timelineofthefuture/video/banner.png"
+              src="/video/banner.png"
               alt="The History of the Future"
               className="max-w-full md:max-w-2xl w-full h-auto px-4"
             />
@@ -226,7 +226,7 @@ const IntroPage = ({ onStart }) => {
                 playsInline
                 className="w-full h-full object-cover"
               >
-                <source src="/timelineofthefuture/video/headphones.mp4" type="video/mp4" />
+                <source src="/video/headphones.mp4" type="video/mp4" />
               </video>
             </div>
 
