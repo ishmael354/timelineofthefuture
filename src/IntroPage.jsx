@@ -7,6 +7,7 @@ const AUDIO_VERSION = '20251121-v12';
 const IntroPage = ({ onStart }) => {
   const [isHovering, setIsHovering] = useState(false);
   const audioRef = useRef(null);
+  const ambientRef = useRef(null);
 
   useEffect(() => {
     // Start intro music on mount
@@ -15,16 +16,29 @@ const IntroPage = ({ onStart }) => {
     audio.volume = 0.3; // Moderate volume for intro
     audioRef.current = audio;
 
-    // Attempt autoplay
+    // Start intro ambient (era-00)
+    const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-00.mp3?v=${AUDIO_VERSION}`);
+    ambient.loop = true;
+    ambient.volume = 0.2; // Ambient layer
+    ambientRef.current = ambient;
+
+    // Attempt autoplay for both
     audio.play().catch(error => {
       console.log('Intro music autoplay blocked:', error.message);
       // Will play on first user interaction
+    });
+
+    ambient.play().catch(error => {
+      console.log('Intro ambient autoplay blocked:', error.message);
     });
 
     // Handler to start audio on any user interaction
     const handleInteraction = () => {
       if (audioRef.current && audioRef.current.paused) {
         audioRef.current.play().catch(err => console.log('Audio play failed:', err));
+      }
+      if (ambientRef.current && ambientRef.current.paused) {
+        ambientRef.current.play().catch(err => console.log('Ambient play failed:', err));
       }
       // Remove listeners after first interaction
       document.removeEventListener('click', handleInteraction);
@@ -42,6 +56,10 @@ const IntroPage = ({ onStart }) => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
+      }
+      if (ambientRef.current) {
+        ambientRef.current.pause();
+        ambientRef.current.currentTime = 0;
       }
     };
   }, []);

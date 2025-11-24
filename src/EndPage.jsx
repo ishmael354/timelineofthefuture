@@ -10,7 +10,8 @@ const EndPage = ({ onRestart }) => {
 
   useEffect(() => {
     if (videoRef.current) {
-      // Video plays silently - background music from timeline continues
+      // Increase video volume
+      videoRef.current.volume = 0.6; // Louder volume for end video
       videoRef.current.play().catch(error => {
         console.log('Video autoplay blocked:', error);
       });
@@ -50,7 +51,7 @@ const EndPage = ({ onRestart }) => {
         <video
           ref={videoRef}
           src={`/timelineofthefuture/video/logo.mp4?v=${VIDEO_VERSION}`}
-          muted={true}
+          muted={false}
           playsInline
           onEnded={handleVideoEnded}
           className="max-w-md w-full"

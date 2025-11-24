@@ -22,6 +22,7 @@ const FutureTimeline = () => {
   const backgroundMusicRef = useRef(null);
   const voiceoverRef = useRef(null);
   const ambientRef = useRef(null);
+  const ambientLayersRef = useRef([]); // Array for multiple ambient layers (a, b, c, etc.)
   const currentMusicTrackRef = useRef(null); // Track which music is playing
 
   const eras = useMemo(() => [
@@ -230,7 +231,7 @@ const FutureTimeline = () => {
         voiceoverRef.current.currentTime = 0;
       }
 
-      // Fade out and stop current ambient
+      // Fade out and stop current ambient layers
       if (ambientRef.current) {
         const currentAmbient = ambientRef.current;
         fadeOutInterval = setInterval(() => {
@@ -244,12 +245,21 @@ const FutureTimeline = () => {
         }, 50);
       }
 
+      // Stop all ambient layers
+      ambientLayersRef.current.forEach(layer => {
+        if (layer) {
+          layer.pause();
+          layer.currentTime = 0;
+        }
+      });
+      ambientLayersRef.current = [];
+
       // Wait a moment for fade out
       await new Promise(resolve => setTimeout(resolve, 500));
       if (isCancelled) return;
 
       try {
-        // Step 1: Start ambient sound first
+        // Step 1: Start main ambient sound first
         const ambient = new Audio(`/timelineofthefuture/audio/ambient/era-${activeEra}.mp3?v=${AUDIO_VERSION}`);
         ambient.loop = true;
         ambient.volume = 0; // Start at 0 for fade-in
@@ -284,6 +294,24 @@ const FutureTimeline = () => {
           }
         }, 50);
 
+        // Load additional ambient layers (era-Xa, era-Xb, etc.)
+        const layers = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        for (const suffix of layers) {
+          try {
+            const layerPath = `/timelineofthefuture/audio/ambient/era-${activeEra}${suffix}.mp3?v=${AUDIO_VERSION}`;
+            const layerAudio = new Audio(layerPath);
+            layerAudio.loop = true;
+            layerAudio.volume = isMuted ? 0 : targetVolume * 0.8; // Layers slightly quieter
+
+            await layerAudio.play();
+            ambientLayersRef.current.push(layerAudio);
+            console.log(`Playing ambient layer: era-${activeEra}${suffix}`);
+          } catch (error) {
+            // File doesn't exist, that's fine - stop trying further layers
+            break;
+          }
+        }
+
         // Step 2: Wait 2 seconds, then play voiceover
         await new Promise(resolve => setTimeout(resolve, 2000));
         if (isCancelled) return;
@@ -315,6 +343,9 @@ const FutureTimeline = () => {
       if (ambientRef.current) {
         ambientRef.current.pause();
       }
+      ambientLayersRef.current.forEach(layer => {
+        if (layer) layer.pause();
+      });
     };
   }, [activeEra, isMuted, audioEnabled, showEnd]);
 
@@ -326,19 +357,25 @@ const FutureTimeline = () => {
     let isCancelled = false;
 
     const startOrSwitchBackgroundMusic = async () => {
-      // Determine which music track to use based on era
-      // background: eras 0-4 (start through Ecological)
-      // background-1: eras 5-9 (Semantic through Mythic)
-      // background-2: eras 10-13 (Risk through Synchronization)
-      // background-3: eras 14-16 (Strategic/Game Theory through end)
+      // Determine which music track to use based on era - more frequent changes
       let musicTrack = 'background';
-      if (activeEra >= 14) {
-        musicTrack = 'background-3';
+      if (activeEra >= 16) {
+        musicTrack = 'background-8'; // Algorithmic Engine through end
+      } else if (activeEra >= 14) {
+        musicTrack = 'background-7'; // Strategic Engine
+      } else if (activeEra >= 12) {
+        musicTrack = 'background-6'; // Industrial Engine
       } else if (activeEra >= 10) {
-        musicTrack = 'background-2';
+        musicTrack = 'background-5'; // Risk Engine
+      } else if (activeEra >= 9) {
+        musicTrack = 'background-4'; // Mythic Engine
+      } else if (activeEra >= 7) {
+        musicTrack = 'background-3'; // Archival Engine
       } else if (activeEra >= 5) {
-        musicTrack = 'background-1';
-      }
+        musicTrack = 'background-2'; // Semantic Engine
+      } else if (activeEra >= 3) {
+        musicTrack = 'background-1'; // Biological Engine
+      } // Era 0-2: background (Null State through Tidal)
 
       // Only start or switch if we don't have music playing OR we need to switch tracks
       const needsSwitch = currentMusicTrackRef.current !== musicTrack;
@@ -372,8 +409,12 @@ const FutureTimeline = () => {
         music.volume = 0; // Start at 0 for fade-in
 
         // Different volumes for different tracks
-        // background-1 is 20% quieter than others
-        const targetVolume = musicTrack === 'background-1' ? 0.04 : 0.05;
+        let targetVolume = 0.05; // Default volume
+        if (musicTrack === 'background-1') {
+          targetVolume = 0.04; // Slightly quieter
+        } else if (musicTrack === 'background-5') {
+          targetVolume = 0.08; // Risk Engine louder
+        }
 
         // Set references BEFORE playing
         backgroundMusicRef.current = music;
@@ -421,10 +462,18 @@ const FutureTimeline = () => {
       if (backgroundMusicRef.current) backgroundMusicRef.current.volume = 0;
       if (voiceoverRef.current) voiceoverRef.current.volume = 0;
       if (ambientRef.current) ambientRef.current.volume = 0;
+      ambientLayersRef.current.forEach(layer => {
+        if (layer) layer.volume = 0;
+      });
     } else {
       if (backgroundMusicRef.current) {
-        // background-1 is 20% quieter
-        const musicVolume = currentMusicTrackRef.current === 'background-1' ? 0.04 : 0.05;
+        // Different volumes for different tracks
+        let musicVolume = 0.05;
+        if (currentMusicTrackRef.current === 'background-1') {
+          musicVolume = 0.04;
+        } else if (currentMusicTrackRef.current === 'background-5') {
+          musicVolume = 0.08; // Risk Engine louder
+        }
         backgroundMusicRef.current.volume = musicVolume;
       }
       if (voiceoverRef.current) voiceoverRef.current.volume = 0.92;
@@ -482,6 +531,10 @@ const FutureTimeline = () => {
     if (ambientRef.current) {
       ambientRef.current.pause();
     }
+    ambientLayersRef.current.forEach(layer => {
+      if (layer) layer.pause();
+    });
+    ambientLayersRef.current = [];
   };
 
   // Show intro page first
