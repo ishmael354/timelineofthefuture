@@ -104,14 +104,14 @@ const EndPage = ({ onRestart }) => {
       </div>
 
       {/* Content */}
-      <div className={`relative z-20 max-w-3xl px-6 text-center space-y-8 md:space-y-10 transition-all duration-1000 ${
+      <div className={`relative z-20 max-w-3xl px-4 md:px-6 text-center space-y-6 md:space-y-8 transition-all duration-1000 ${
         videoEnded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
 
         {/* Logo/Title */}
-        <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0s' }}>
-          <div className="flex items-center justify-center mb-4">
-            <div className="relative w-24 h-24 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-900/20 overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.3)]">
+        <div className="space-y-4 md:space-y-6 animate-fade-in" style={{ animationDelay: '0s' }}>
+          <div className="flex items-center justify-center mb-3 md:mb-4">
+            <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-900/20 overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.3)]">
               <img
                 src="/video/The Future Concern Logo.png"
                 alt="The Future Concern"
@@ -121,59 +121,59 @@ const EndPage = ({ onRestart }) => {
               <div className="absolute inset-0 bg-emerald-500/10 blur-xl rounded-full"></div>
             </div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter leading-none bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-tight md:leading-none bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60 px-2">
             The Future Concern
           </h1>
-          <p className="text-emerald-400 text-xs md:text-sm tracking-[0.3em] uppercase">
+          <p className="text-emerald-400 text-[10px] md:text-xs tracking-[0.25em] md:tracking-[0.3em] uppercase">
             Presents: The History of the Future
           </p>
         </div>
 
         {/* Mission Statement */}
-        <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          <p className="text-base md:text-lg text-gray-300 font-light leading-relaxed max-w-2xl mx-auto">
+        <div className="space-y-4 md:space-y-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <p className="text-sm md:text-base lg:text-lg text-gray-300 font-light leading-relaxed max-w-2xl mx-auto px-2">
             The Future Concern maps how humans imagine tomorrow—
             and how those imaginations loop back to shape what we build, buy, fear, and fight for.
           </p>
-          <p className="text-base md:text-lg text-gray-300 font-light leading-relaxed max-w-2xl mx-auto">
+          <p className="text-sm md:text-base lg:text-lg text-gray-300 font-light leading-relaxed max-w-2xl mx-auto px-2">
             We dig through history, media, and technology to expose the futures we're being sold
             and to help design better ones.
           </p>
         </div>
 
         {/* Divider */}
-        <div className="w-px h-12 bg-gradient-to-b from-transparent via-emerald-500/30 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.4s' }}></div>
+        <div className="w-px h-8 md:h-10 bg-gradient-to-b from-transparent via-emerald-500/30 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.4s' }}></div>
 
         {/* Signup Form */}
         <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
-          <div className="mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">Join the Concern</h2>
-            <p className="text-sm md:text-base text-gray-400">Get updates on new projects and insights</p>
+          <div className="mb-4 md:mb-6">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight mb-2 md:mb-3 px-2">Join the Concern</h2>
+            <p className="text-xs md:text-sm lg:text-base text-gray-400 px-2">Get updates on new projects and insights</p>
           </div>
           <div
             ref={signupFormRef}
-            className="min-h-[58px] max-w-[440px] mx-auto w-full"
+            className="min-h-[58px] max-w-[440px] mx-auto w-full px-4"
           ></div>
         </div>
 
         {/* Divider */}
-        <div className="w-px h-12 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.8s' }}></div>
+        <div className="w-px h-8 md:h-10 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.8s' }}></div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row gap-4 justify-center items-center animate-fade-in" style={{ animationDelay: '1s' }}>
+        <div className="flex flex-col md:flex-row gap-3 md:gap-4 justify-center items-stretch md:items-center animate-fade-in px-4" style={{ animationDelay: '1s' }}>
           <button
             onClick={onRestart}
-            className="group relative px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white font-bold tracking-wider uppercase text-xs transition-all duration-300 flex items-center gap-3 rounded-full shadow-lg hover:shadow-white/20"
+            className="group relative px-5 md:px-6 py-2.5 md:py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white font-bold tracking-wider uppercase text-[10px] md:text-xs transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 rounded-full shadow-lg hover:shadow-white/20"
           >
-            <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
+            <RotateCcw className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:rotate-180 transition-transform duration-500" />
             Restart Experience
           </button>
 
           <button
             onClick={handleShare}
-            className="group relative px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white font-bold tracking-wider uppercase text-xs transition-all duration-300 flex items-center gap-3 rounded-full shadow-lg hover:shadow-white/20"
+            className="group relative px-5 md:px-6 py-2.5 md:py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white font-bold tracking-wider uppercase text-[10px] md:text-xs transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 rounded-full shadow-lg hover:shadow-white/20"
           >
-            <Share2 className="w-4 h-4" />
+            <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
             Share
           </button>
 
@@ -181,10 +181,10 @@ const EndPage = ({ onRestart }) => {
             href="https://thefutureconcern.io"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold tracking-wider uppercase text-xs transition-all duration-300 flex items-center gap-3 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)]"
+            className="group relative px-5 md:px-6 py-2.5 md:py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold tracking-wider uppercase text-[10px] md:text-xs transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)]"
           >
             Learn More
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform" />
           </a>
         </div>
 
