@@ -99,7 +99,7 @@ const IntroPage = ({ onStart }) => {
   }, []);
 
   return (
-    <div className="relative w-full min-h-screen bg-black text-white overflow-y-auto font-sans flex flex-col items-center justify-center py-8 md:py-0">
+    <div className="relative w-full min-h-screen bg-black text-white overflow-y-auto font-sans flex flex-col items-center py-8">
 
       {/* --- CUSTOM ANIMATIONS --- */}
       <style>{`
