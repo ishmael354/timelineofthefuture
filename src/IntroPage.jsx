@@ -126,6 +126,15 @@ const IntroPage = ({ onStart }) => {
         .animate-glow {
           animation: glow-pulse 4s ease-in-out infinite;
         }
+
+        @keyframes wave-flow-horizontal {
+          0% { transform: translateX(-50%) scaleY(1); }
+          50% { transform: translateX(-50%) scaleY(1.2); }
+          100% { transform: translateX(-50%) scaleY(1); }
+        }
+        .animate-wave-flow {
+          animation: wave-flow-horizontal 3s ease-in-out infinite;
+        }
       `}</style>
 
       {/* --- BACKGROUND: THE ARCHITECT'S GRID --- */}
@@ -149,8 +158,31 @@ const IntroPage = ({ onStart }) => {
             />
           </div>
 
-          <div className="inline-block px-3 py-1 border border-white/20 rounded-full text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">
-            Incoming Transmission
+          <div className="relative inline-block mb-4">
+            {/* Animated sine wave background */}
+            <div className="absolute inset-0 overflow-hidden rounded-full">
+              <svg className="absolute top-1/2 left-1/2 -translate-y-1/2 w-[200%] h-[200%] animate-wave-flow" viewBox="0 0 400 100" preserveAspectRatio="none">
+                <path
+                  d="M0,50 Q10,30 20,50 T40,50 T60,50 T80,50 T100,50 T120,50 T140,50 T160,50 T180,50 T200,50 T220,50 T240,50 T260,50 T280,50 T300,50 T320,50 T340,50 T360,50 T380,50 T400,50"
+                  fill="none"
+                  stroke="#10b981"
+                  strokeWidth="1"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,50 Q10,40 20,50 T40,50 T60,50 T80,50 T100,50 T120,50 T140,50 T160,50 T180,50 T200,50 T220,50 T240,50 T260,50 T280,50 T300,50 T320,50 T340,50 T360,50 T380,50 T400,50"
+                  fill="none"
+                  stroke="#34d399"
+                  strokeWidth="0.5"
+                  opacity="0.2"
+                />
+              </svg>
+            </div>
+
+            {/* Pill badge */}
+            <div className="relative px-3 py-1 border border-emerald-500/40 rounded-full text-[10px] uppercase tracking-[0.3em] text-emerald-400 bg-emerald-950/30 backdrop-blur-sm shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+              Incoming Transmission
+            </div>
           </div>
           <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-none bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">
             The History <br /> of the Future
