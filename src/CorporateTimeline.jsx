@@ -608,14 +608,14 @@ const CorporateTimeline = () => {
         </div>
 
         {/* Transcript Overlay */}
-        <div className="fixed bottom-24 md:bottom-8 left-4 md:left-auto md:right-8 z-40 max-w-sm">
-          <div className="bg-neutral-950/90 border border-emerald-500/20 p-4 backdrop-blur-sm rounded">
-            <div className="flex items-center gap-2 mb-2">
-              <Mic size={12} className="text-emerald-500" />
-              <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-500">Transcript</span>
+        <div className="fixed bottom-24 md:bottom-8 left-4 md:left-auto md:right-8 z-40 max-w-lg">
+          <div className="bg-neutral-950/95 border border-emerald-500/20 p-5 md:p-6 backdrop-blur-sm rounded max-h-[40vh] overflow-y-auto">
+            <div className="flex items-center gap-2 mb-3">
+              <Mic size={14} className="text-emerald-500" />
+              <span className="text-xs font-mono uppercase tracking-widest text-emerald-500">Transcript</span>
             </div>
-            <p className="text-sm text-neutral-400 leading-relaxed font-serif italic">
-              "{currentEra.transcript.slice(0, 150)}..."
+            <p className="text-base md:text-lg text-neutral-300 leading-relaxed font-serif italic">
+              "{currentEra.transcript}"
             </p>
           </div>
         </div>
