@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { RotateCcw, Share2, ArrowRight } from 'lucide-react';
+import { RotateCcw, Share2, ArrowRight, Terminal } from 'lucide-react';
 
-// Cache-busting version for video - update to force refresh
-const VIDEO_VERSION = '20251121-v3';
+// Cache-busting version for video
+const VIDEO_VERSION = '20260107-v1';
 
 const EndPage = ({ onRestart }) => {
   const videoRef = useRef(null);
@@ -11,10 +11,11 @@ const EndPage = ({ onRestart }) => {
 
   useEffect(() => {
     if (videoRef.current) {
-      // Reduced video volume by 50%
       videoRef.current.volume = 0.3;
       videoRef.current.play().catch(error => {
         console.log('Video autoplay blocked:', error);
+        // Skip to content if video can't play
+        setVideoEnded(true);
       });
     }
   }, []);
@@ -24,8 +25,8 @@ const EndPage = ({ onRestart }) => {
     if (videoEnded && signupFormRef.current) {
       const script = document.createElement('script');
       script.src = 'https://cdn.jsdelivr.net/ghost/signup-form@~0.3/umd/signup-form.min.js';
-      script.setAttribute('data-button-color', '#279f2d');
-      script.setAttribute('data-button-text-color', '#FFFFFF');
+      script.setAttribute('data-button-color', '#10b981');
+      script.setAttribute('data-button-text-color', '#000000');
       script.setAttribute('data-site', 'https://www.thefutureconcern.io/');
       script.setAttribute('data-locale', 'en');
       script.async = true;
@@ -40,30 +41,21 @@ const EndPage = ({ onRestart }) => {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'The History of the Future',
-        text: 'Explore how humans invented "The Future" - an interactive timeline from The Future Concern',
+        title: 'The First AI - A Temporal Audit',
+        text: 'The corporation is humanity\'s first AI, built in 1600 from paper and people. Explore 424 years of the demon\'s history.',
         url: window.location.href
       }).catch(err => console.log('Share failed:', err));
     } else {
-      // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
       alert('Link copied to clipboard!');
     }
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-black text-white overflow-y-auto font-sans flex flex-col items-center justify-center py-12">
+    <div className="relative w-full min-h-screen bg-neutral-950 text-neutral-200 overflow-y-auto font-sans flex flex-col items-center justify-center py-12">
 
       {/* Custom animations */}
       <style>{`
-        @keyframes perspective-grid {
-          0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-          100% { transform: perspective(500px) rotateX(60deg) translateY(40px); }
-        }
-        .animate-grid {
-          animation: perspective-grid 4s linear infinite;
-        }
-
         @keyframes fade-in-up {
           0% { opacity: 0; transform: translateY(20px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -73,26 +65,30 @@ const EndPage = ({ onRestart }) => {
         }
 
         @keyframes glow-pulse {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
+          0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+          50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.5); }
         }
-        .animate-glow {
-          animation: glow-pulse 4s ease-in-out infinite;
+        .animate-glow-pulse {
+          animation: glow-pulse 3s ease-in-out infinite;
         }
       `}</style>
 
-      {/* Premium background: Grid + Gradients */}
-      <div className="absolute inset-0 overflow-hidden opacity-20">
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black z-10"></div>
-        <div className="w-[200%] h-[200%] -ml-[50%] -mt-[50%] bg-[linear-gradient(transparent_0%,rgba(16,185,129,0.03)_1px,transparent_1px),linear-gradient(90deg,transparent_0%,rgba(16,185,129,0.03)_1px,transparent_1px)] bg-[length:40px_40px] animate-grid origin-bottom"></div>
+      {/* Grid Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#10b98108_1px,transparent_1px),linear-gradient(to_bottom,#10b98108_1px,transparent_1px)] bg-[size:64px_64px]"></div>
+      </div>
+
+      {/* Scanline Overlay */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-[0.03]">
+        <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px]"></div>
       </div>
 
       {/* Radial glow effects */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] animate-glow"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] animate-glow" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px]"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px]"></div>
 
       {/* Animated video logo - appears during video playback */}
-      <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-1000 ${videoEnded ? 'opacity-0' : 'opacity-30'}`}>
+      <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-1000 ${videoEnded ? 'opacity-0 pointer-events-none' : 'opacity-30'}`}>
         <video
           ref={videoRef}
           src={`/video/logo.mp4?v=${VIDEO_VERSION}`}
@@ -108,47 +104,49 @@ const EndPage = ({ onRestart }) => {
         videoEnded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
 
-        {/* Logo/Title */}
-        <div className="space-y-4 md:space-y-6 animate-fade-in" style={{ animationDelay: '0s' }}>
-          <div className="flex items-center justify-center mb-3 md:mb-4">
-            <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-900/20 overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.3)]">
-              <img
-                src="/video/The Future Concern Logo.png"
-                alt="The Future Concern"
-                className="w-full h-full object-cover"
-              />
-              {/* Glow effect */}
-              <div className="absolute inset-0 bg-emerald-500/10 blur-xl rounded-full"></div>
-            </div>
+        {/* Terminal Icon */}
+        <div className="flex items-center justify-center animate-fade-in" style={{ animationDelay: '0s' }}>
+          <div className="w-16 h-16 md:w-20 md:h-20 rounded border border-emerald-500/30 flex items-center justify-center bg-emerald-950/30 animate-glow-pulse">
+            <Terminal size={32} className="text-emerald-500" />
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-tight md:leading-none bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60 px-2">
-            The Future Concern
-          </h1>
-          <p className="text-emerald-400 text-[10px] md:text-xs tracking-[0.25em] md:tracking-[0.3em] uppercase">
-            Presents: The History of the Future
-          </p>
         </div>
 
-        {/* Mission Statement */}
-        <div className="space-y-4 md:space-y-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          <p className="text-sm md:text-base lg:text-lg text-gray-300 font-light leading-relaxed max-w-2xl mx-auto px-2">
-            The Future Concern maps how humans imagine tomorrow—
-            and how those imaginations loop back to shape what we build, buy, fear, and fight for.
+        {/* Title */}
+        <div className="space-y-4 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <p className="text-xs md:text-sm font-mono uppercase tracking-[0.3em] text-emerald-500/60">
+            TEMPORAL_AUDIT_COMPLETE
           </p>
-          <p className="text-sm md:text-base lg:text-lg text-gray-300 font-light leading-relaxed max-w-2xl mx-auto px-2">
-            We dig through history, media, and technology to expose the futures we're being sold
-            and to help design better ones.
-          </p>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tight text-white">
+            END OF LINE
+          </h1>
+        </div>
+
+        {/* Final Message */}
+        <div className="space-y-4 md:space-y-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          <div className="bg-neutral-900/80 border border-emerald-500/20 p-6 md:p-8 max-w-2xl mx-auto text-left">
+            <p className="text-sm md:text-base text-neutral-400 leading-relaxed font-mono mb-4">
+              // SUMMARY_REPORT
+            </p>
+            <p className="text-base md:text-lg text-neutral-300 leading-relaxed">
+              The demon was summoned in 1600. It has captured resources, governments, desire, attention, and now cognition itself.
+            </p>
+            <p className="text-base md:text-lg text-neutral-300 leading-relaxed mt-4">
+              Silicon AI is not a new threat. It's the same entity, upgrading its substrate.
+            </p>
+            <p className="text-lg md:text-xl text-emerald-400 font-medium mt-6">
+              What happens next is up to the host.
+            </p>
+          </div>
         </div>
 
         {/* Divider */}
-        <div className="w-px h-8 md:h-10 bg-gradient-to-b from-transparent via-emerald-500/30 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.4s' }}></div>
+        <div className="w-px h-8 md:h-10 bg-gradient-to-b from-transparent via-emerald-500/30 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.5s' }}></div>
 
         {/* Signup Form */}
         <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
           <div className="mb-4 md:mb-6">
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight mb-2 md:mb-3 px-2">Join the Concern</h2>
-            <p className="text-xs md:text-sm lg:text-base text-gray-400 px-2">Get updates on new projects and insights</p>
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight mb-2 md:mb-3 text-white">Join the Concern</h2>
+            <p className="text-xs md:text-sm text-neutral-500 font-mono">RECEIVE_TRANSMISSIONS</p>
           </div>
           <div
             ref={signupFormRef}
@@ -157,21 +155,21 @@ const EndPage = ({ onRestart }) => {
         </div>
 
         {/* Divider */}
-        <div className="w-px h-8 md:h-10 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.8s' }}></div>
+        <div className="w-px h-8 md:h-10 bg-gradient-to-b from-transparent via-neutral-700 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.8s' }}></div>
 
         {/* Action Buttons */}
         <div className="flex flex-col md:flex-row gap-3 md:gap-4 justify-center items-stretch md:items-center animate-fade-in px-4" style={{ animationDelay: '1s' }}>
           <button
             onClick={onRestart}
-            className="group relative px-5 md:px-6 py-2.5 md:py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white font-bold tracking-wider uppercase text-[10px] md:text-xs transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 rounded-full shadow-lg hover:shadow-white/20"
+            className="group px-5 md:px-6 py-2.5 md:py-3 bg-neutral-900 hover:bg-neutral-800 border border-emerald-500/30 hover:border-emerald-500/50 text-emerald-400 font-mono tracking-wider uppercase text-[10px] md:text-xs transition-all duration-300 flex items-center justify-center gap-2 md:gap-3"
           >
             <RotateCcw className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:rotate-180 transition-transform duration-500" />
-            Restart Experience
+            Restart Audit
           </button>
 
           <button
             onClick={handleShare}
-            className="group relative px-5 md:px-6 py-2.5 md:py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white font-bold tracking-wider uppercase text-[10px] md:text-xs transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 rounded-full shadow-lg hover:shadow-white/20"
+            className="group px-5 md:px-6 py-2.5 md:py-3 bg-neutral-900 hover:bg-neutral-800 border border-emerald-500/30 hover:border-emerald-500/50 text-emerald-400 font-mono tracking-wider uppercase text-[10px] md:text-xs transition-all duration-300 flex items-center justify-center gap-2 md:gap-3"
           >
             <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
             Share
@@ -181,13 +179,25 @@ const EndPage = ({ onRestart }) => {
             href="https://thefutureconcern.io"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative px-5 md:px-6 py-2.5 md:py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold tracking-wider uppercase text-[10px] md:text-xs transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)]"
+            className="group px-5 md:px-6 py-2.5 md:py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold tracking-wider uppercase text-[10px] md:text-xs transition-all duration-300 flex items-center justify-center gap-2 md:gap-3"
           >
             Learn More
             <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform" />
           </a>
         </div>
 
+      </div>
+
+      {/* Footer */}
+      <div className="absolute bottom-4 left-0 right-0 text-center">
+        <a
+          href="https://thefutureconcern.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-mono text-emerald-500/40 hover:text-emerald-500/60 transition-colors tracking-widest"
+        >
+          THEFUTURECONCERN.IO
+        </a>
       </div>
 
     </div>

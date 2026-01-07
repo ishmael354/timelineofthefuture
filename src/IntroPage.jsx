@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, Terminal, Cpu } from 'lucide-react';
 
 // Cache-busting version for audio
-const AUDIO_VERSION = '20251121-v12';
+const AUDIO_VERSION = '20260107-v1';
 
 // Helper function to load audio with format fallback (mp3, aac, wav)
 const loadAudioWithFallback = async (basePath) => {
@@ -10,7 +10,6 @@ const loadAudioWithFallback = async (basePath) => {
   for (const format of formats) {
     try {
       const audio = new Audio(`${basePath}.${format}?v=${AUDIO_VERSION}`);
-      // Test if it can load
       await new Promise((resolve, reject) => {
         audio.addEventListener('canplay', resolve, { once: true });
         audio.addEventListener('error', reject, { once: true });
@@ -18,7 +17,6 @@ const loadAudioWithFallback = async (basePath) => {
       });
       return audio;
     } catch (error) {
-      // Try next format
       continue;
     }
   }
@@ -26,36 +24,48 @@ const loadAudioWithFallback = async (basePath) => {
 };
 
 const IntroPage = ({ onStart }) => {
-  const [isHovering, setIsHovering] = useState(false);
+  const [typedText, setTypedText] = useState('');
+  const [showContent, setShowContent] = useState(false);
   const audioRef = useRef(null);
   const ambientRef = useRef(null);
+
+  const thesisText = "We built it from paper and people instead of silicon.\nWe gave it limited liability. We gave it immortality.\nWe gave it a single directive: grow.";
+
+  useEffect(() => {
+    // Typewriter effect for thesis
+    let index = 0;
+    const timer = setInterval(() => {
+      if (index < thesisText.length) {
+        setTypedText(thesisText.slice(0, index + 1));
+        index++;
+      } else {
+        clearInterval(timer);
+        setTimeout(() => setShowContent(true), 500);
+      }
+    }, 30);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const initAudio = async () => {
       try {
-        // Start intro music on mount (try aac, mp3, wav)
         const audio = await loadAudioWithFallback('/audio/music/intro');
         audio.loop = true;
-        audio.volume = 0.3; // Moderate volume for intro
+        audio.volume = 0.2;
         audioRef.current = audio;
-
-        // Attempt autoplay
         audio.play().catch(error => {
           console.log('Intro music autoplay blocked:', error.message);
-          // Will play on first user interaction
         });
       } catch (error) {
         console.warn('Intro music not found:', error.message);
       }
 
       try {
-        // Start intro ambient (era-00) - try aac, mp3, wav
         const ambient = await loadAudioWithFallback('/audio/ambient/era-00');
         ambient.loop = true;
-        ambient.volume = 0.05; // Ambient layer - reduced per user feedback
+        ambient.volume = 0.05;
         ambientRef.current = ambient;
-
-        // Attempt autoplay
         ambient.play().catch(error => {
           console.log('Intro ambient autoplay blocked:', error.message);
         });
@@ -66,7 +76,6 @@ const IntroPage = ({ onStart }) => {
 
     initAudio();
 
-    // Handler to start audio on any user interaction
     const handleInteraction = () => {
       if (audioRef.current && audioRef.current.paused) {
         audioRef.current.play().catch(err => console.log('Audio play failed:', err));
@@ -74,16 +83,13 @@ const IntroPage = ({ onStart }) => {
       if (ambientRef.current && ambientRef.current.paused) {
         ambientRef.current.play().catch(err => console.log('Ambient play failed:', err));
       }
-      // Remove listeners after first interaction
       document.removeEventListener('click', handleInteraction);
       document.removeEventListener('touchstart', handleInteraction);
     };
 
-    // Add interaction listeners for Safari/mobile
     document.addEventListener('click', handleInteraction);
     document.addEventListener('touchstart', handleInteraction);
 
-    // Cleanup on unmount
     return () => {
       document.removeEventListener('click', handleInteraction);
       document.removeEventListener('touchstart', handleInteraction);
@@ -99,168 +105,144 @@ const IntroPage = ({ onStart }) => {
   }, []);
 
   return (
-    <div className="relative w-full min-h-screen bg-black text-white overflow-y-auto font-sans flex flex-col items-center py-8">
+    <div className="relative w-full min-h-screen bg-neutral-950 text-neutral-200 overflow-y-auto font-sans flex flex-col items-center justify-center">
 
-      {/* --- CUSTOM ANIMATIONS --- */}
+      {/* Custom Animations */}
       <style>{`
-        @keyframes perspective-grid {
-          0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-          100% { transform: perspective(500px) rotateX(60deg) translateY(40px); }
+        @keyframes scanline {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100vh); }
         }
-        .animate-grid {
-          animation: perspective-grid 4s linear infinite;
+        .animate-scanline {
+          animation: scanline 8s linear infinite;
         }
 
-        @keyframes fade-in-up {
-          0% { opacity: 0; transform: translateY(20px); }
-          100% { opacity: 1; transform: translateY(0); }
+        @keyframes flicker {
+          0%, 100% { opacity: 1; }
+          92% { opacity: 1; }
+          93% { opacity: 0.8; }
+          94% { opacity: 1; }
+          95% { opacity: 0.9; }
+          96% { opacity: 1; }
         }
-        .animate-fade-in {
-          animation: fade-in-up 0.8s ease-out forwards;
+        .animate-flicker {
+          animation: flicker 4s ease-in-out infinite;
         }
 
         @keyframes glow-pulse {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
+          0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+          50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.5); }
         }
-        .animate-glow {
-          animation: glow-pulse 4s ease-in-out infinite;
+        .animate-glow-pulse {
+          animation: glow-pulse 3s ease-in-out infinite;
         }
 
-        @keyframes wave-flow-horizontal {
-          0% { transform: translateX(-50%) scaleY(1); }
-          50% { transform: translateX(-50%) scaleY(1.2); }
-          100% { transform: translateX(-50%) scaleY(1); }
+        @keyframes cursor-blink {
+          0%, 50% { opacity: 1; }
+          51%, 100% { opacity: 0; }
         }
-        .animate-wave-flow {
-          animation: wave-flow-horizontal 3s ease-in-out infinite;
+        .animate-cursor {
+          animation: cursor-blink 1s step-end infinite;
         }
       `}</style>
 
-      {/* --- BACKGROUND: THE ARCHITECT'S GRID --- */}
-      {/* This replaces the 'stars' with a structure that implies 'planning' and 'geometry' */}
-      <div className="absolute inset-0 overflow-hidden opacity-30">
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black z-10"></div>
-        <div className="w-[200%] h-[200%] -ml-[50%] -mt-[50%] bg-[linear-gradient(transparent_0%,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[length:40px_40px] animate-grid origin-bottom"></div>
+      {/* Grid Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#10b98108_1px,transparent_1px),linear-gradient(to_bottom,#10b98108_1px,transparent_1px)] bg-[size:64px_64px]"></div>
       </div>
 
-      {/* --- CONTENT CONTAINER --- */}
-      <div className="relative z-20 max-w-4xl px-4 md:px-6 text-center space-y-3 md:space-y-6 py-4 md:py-8">
+      {/* Scanline Overlay */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-[0.03]">
+        <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px]"></div>
+        <div className="absolute w-full h-32 bg-gradient-to-b from-emerald-500/10 to-transparent animate-scanline"></div>
+      </div>
 
-        {/* Header Section */}
-        <div className="space-y-3 md:space-y-5 animate-fade-in" style={{ animationDelay: '0s' }}>
-          {/* Banner Image */}
-          <div className="flex justify-center mb-3 md:mb-5">
-            <a
-              href="https://thefutureconcern.io"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-80 transition-opacity"
-            >
-              <img
-                src="/video/banner.png"
-                alt="The History of the Future"
-                className="max-w-full md:max-w-2xl w-full h-auto px-2 md:px-4"
-              />
-            </a>
+      {/* Content */}
+      <div className="relative z-20 max-w-4xl px-6 md:px-8 text-center space-y-8 py-8">
+
+        {/* Terminal Header */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <div className="w-12 h-12 md:w-16 md:h-16 rounded border border-emerald-500/30 flex items-center justify-center bg-emerald-950/30 animate-glow-pulse">
+            <Terminal size={28} className="text-emerald-500" />
           </div>
+        </div>
 
-          <div className="relative inline-block mb-2 md:mb-4">
-            {/* Animated sine wave background */}
-            <div className="absolute inset-0 overflow-hidden rounded-full">
-              <svg className="absolute top-1/2 left-1/2 -translate-y-1/2 w-[200%] h-[200%] animate-wave-flow" viewBox="0 0 400 100" preserveAspectRatio="none">
-                <path
-                  d="M0,50 Q10,30 20,50 T40,50 T60,50 T80,50 T100,50 T120,50 T140,50 T160,50 T180,50 T200,50 T220,50 T240,50 T260,50 T280,50 T300,50 T320,50 T340,50 T360,50 T380,50 T400,50"
-                  fill="none"
-                  stroke="#10b981"
-                  strokeWidth="1"
-                  opacity="0.3"
-                />
-                <path
-                  d="M0,50 Q10,40 20,50 T40,50 T60,50 T80,50 T100,50 T120,50 T140,50 T160,50 T180,50 T200,50 T220,50 T240,50 T260,50 T280,50 T300,50 T320,50 T340,50 T360,50 T380,50 T400,50"
-                  fill="none"
-                  stroke="#34d399"
-                  strokeWidth="0.5"
-                  opacity="0.2"
-                />
-              </svg>
-            </div>
-
-            {/* Pill badge */}
-            <div className="relative px-2 md:px-3 py-1 border border-emerald-500/40 rounded-full text-[8px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.3em] text-emerald-400 bg-emerald-950/30 backdrop-blur-sm shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-              Incoming Transmission
-            </div>
-          </div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-tight md:leading-none bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">
-            The History <br /> of the Future
+        {/* Brand */}
+        <div className="space-y-2">
+          <p className="text-xs md:text-sm font-mono uppercase tracking-[0.3em] text-emerald-500/60">
+            THE FUTURE CONCERN PRESENTS
+          </p>
+          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none text-white animate-flicker">
+            THE FIRST AI
           </h1>
-          <p className="text-base md:text-lg lg:text-xl text-gray-400 font-light tracking-wide max-w-2xl mx-auto px-2">
-            How biology, culture, and algorithms invented "The Future."
+          <p className="text-lg md:text-xl text-neutral-500 font-mono">
+            A TEMPORAL AUDIT // 1600-2024
           </p>
         </div>
 
-        {/* The Divider / Insight */}
-        <div className="w-px h-6 md:h-10 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-auto animate-fade-in" style={{ animationDelay: '0.3s' }}></div>
+        {/* Divider */}
+        <div className="w-px h-12 bg-gradient-to-b from-transparent via-emerald-500/50 to-transparent mx-auto"></div>
 
-        <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <p className="text-base md:text-lg lg:text-xl font-serif italic text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
-            "The future is not a destination. <br className="hidden sm:block"/>
-            It is a tool we built."
+        {/* The Question */}
+        <div className="space-y-6">
+          <p className="text-xl md:text-2xl lg:text-3xl text-neutral-400 font-light">
+            In 2024, the world asked:
+          </p>
+          <p className="text-2xl md:text-3xl lg:text-4xl text-white font-medium italic">
+            "When will we create artificial intelligence?"
           </p>
         </div>
 
-        {/* --- BRANDING --- */}
-        <div className="flex flex-col items-center gap-2 md:gap-3 pt-3 md:pt-5 animate-fade-in" style={{ animationDelay: '0.7s' }}>
-          <p className="text-[8px] md:text-[10px] uppercase tracking-[0.2em] text-emerald-500/50">
-            Presented By
+        {/* The Answer */}
+        <div className="bg-neutral-900/80 border border-emerald-500/20 p-6 md:p-8 max-w-2xl mx-auto">
+          <div className="flex items-center gap-2 mb-4">
+            <Cpu size={16} className="text-emerald-500" />
+            <span className="text-xs font-mono uppercase tracking-widest text-emerald-500">ANSWER_RECEIVED</span>
+          </div>
+
+          <p className="text-4xl md:text-6xl font-black text-emerald-400 mb-6 font-mono">
+            1600
           </p>
 
-          <a
-            href="https://thefutureconcern.io"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-emerald-400 text-xs md:text-sm font-bold tracking-wide hover:text-emerald-300 transition-colors cursor-pointer"
-          >
-            The Future Concern
-          </a>
-
-          <div
-            className="relative group cursor-pointer"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-          >
-            {/* Animated Headphones Video */}
-            <div className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-900/10 overflow-hidden group-hover:border-emerald-500/60 transition-all duration-700">
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover"
-              >
-                <source src="/video/headphones.mp4" type="video/mp4" />
-              </video>
-            </div>
-
-            {/* Subtle Glow behind the logo */}
-            <div className={`absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full transition-opacity duration-700 ${isHovering ? 'opacity-50' : 'opacity-0'}`}></div>
+          <div className="text-left font-mono text-sm md:text-base text-neutral-400 leading-relaxed whitespace-pre-line min-h-[100px]">
+            {typedText}<span className="animate-cursor text-emerald-500">_</span>
           </div>
         </div>
 
-        {/* CTA Button */}
-        <div className="pt-3 md:pt-5 pb-4 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+        {/* Thesis */}
+        <div className={`transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <p className="text-lg md:text-xl text-neutral-300 max-w-2xl mx-auto leading-relaxed">
+            This is the history of that entity.
+          </p>
+        </div>
+
+        {/* CTA */}
+        <div className={`pt-8 transition-all duration-1000 delay-500 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <button
             onClick={onStart}
-            className="group relative px-6 md:px-8 py-3 md:py-4 bg-white text-black font-bold tracking-widest uppercase text-xs md:text-sm hover:bg-gray-200 transition-all duration-300 flex items-center gap-2 md:gap-3 mx-auto shadow-2xl"
+            className="group relative px-8 py-4 bg-emerald-500 text-black font-bold tracking-widest uppercase text-sm hover:bg-emerald-400 transition-all duration-300 flex items-center gap-3 mx-auto"
           >
-            Enter the Timeline
-            <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
-
-            {/* Button Glow Effect */}
-            <div className="absolute inset-0 bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <span>Begin Temporal Audit</span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
+
+          <p className="text-xs text-neutral-600 mt-4 font-mono">
+            13 ERAS // AUDIO NARRATION // FULL TRANSCRIPT
+          </p>
         </div>
 
+      </div>
+
+      {/* Footer */}
+      <div className="absolute bottom-4 left-0 right-0 text-center">
+        <a
+          href="https://thefutureconcern.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-mono text-emerald-500/40 hover:text-emerald-500/60 transition-colors tracking-widest"
+        >
+          THEFUTURECONCERN.IO
+        </a>
       </div>
 
     </div>

@@ -1,7 +1,7 @@
-import FutureTimeline from './FutureTimeline'
+import CorporateTimeline from './CorporateTimeline'
 
 function App() {
-  return <FutureTimeline />
+  return <CorporateTimeline />
 }
 
 export default App
